@@ -28,7 +28,7 @@ O **RecipeBük** é uma aplicação de armazenamento, busca e compartilhamento d
 
 Para executar o container Docker de desenvolvimento:
 ```sudo docker build -t backend .```
-```sudo docker run --rm -it -p 3000:3000 -v /app/node_modules backend```
+```sudo docker run --rm -it -p 3000:3000 -v $PWD:/app -v /app/node_modules backend```
 <!---
 ## Screenshots
 Adicione 3 ou mais screenshots do projeto em termos de interface e funcionamento.

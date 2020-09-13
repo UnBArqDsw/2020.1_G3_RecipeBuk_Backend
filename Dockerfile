@@ -10,6 +10,6 @@ RUN npm i nodemon -g
 
 COPY ./ /app
 
-CMD ["npm","run","start-dev"]
+CMD ["npm","run","start-dev"] 
 
 EXPOSE 3000
