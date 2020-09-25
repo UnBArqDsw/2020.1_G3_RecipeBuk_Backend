@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/UnBArqDsw/2020.1_G3_RecipeBuk_Backend#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "crawler": "^1.2.2"
   }
 }
