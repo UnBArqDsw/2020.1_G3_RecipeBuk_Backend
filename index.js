@@ -6,8 +6,9 @@ var retries = 5;
 while (retries) {
   try {
     dbConnect();
+    break;
   } catch (err) {
-    retries--;
+    retries -= 1;
     console.log(err);
     console.log("Retries left:" + retries);
   }
