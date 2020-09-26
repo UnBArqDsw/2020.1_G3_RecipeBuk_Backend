@@ -1,11 +1,17 @@
 include .env
 
+.PHONY: up-build
+
+up-build:
+	sudo docker-compose up --build
+
 .PHONY: up
 
 up:
-	docker-compose up
+	sudo docker-compose up
+	
 
 .PHONY: down
 
 down:
-	docker-compose down
+	sudo docker-compose down -v
