@@ -1,9 +1,16 @@
 var express = require('express');
 var app = express();
-const Crawler = require('crawler');
+const Crawler = require('./src/models/Crawler');
 
 app.get('/', function (req, res) {
   res.send('Recipe Buk');
+});
+
+app.get('/search', (req, res) => {
+    let crawler = new Crawler('torta');
+    crawler.getResults().then((results) => {
+        res.json(results);
+    });
 });
 
 app.get('/tudogostoso', (req, res) => {
