@@ -1,7 +1,7 @@
 const crawler = require('crawler');
 
 module.exports = class Crawler {
-	constructor(search_term) {
+	constructor(search_term, search_page = 1) {
 		this.search_term = search_term;
         this.search_results = [];
         this.search_crawler = new crawler({
@@ -9,13 +9,14 @@ module.exports = class Crawler {
             retries: 3,
             retryTimeout: 5000
         });
+        this.search_page = search_page;
         this.websites_queue = []
     }
 
     generate_websites_queue() {
         //Tudo Gostoso
         this.websites_queue.push({
-            uri: `https://www.tudogostoso.com.br/busca?q=${this.search_term}`,
+            uri: `https://www.tudogostoso.com.br/busca?q=${this.search_term}&page=${this.search_page}`,
             callback: (error, res, done) => {
                 if(error) {
                     console.log(error);
@@ -34,7 +35,7 @@ module.exports = class Crawler {
                         let recipe_img_url = recipe_picture.children[1].attribs.src;
 
                         results.push({
-                            link: recipe_link,
+                            link: 'https://www.tudogostoso.com.br' + recipe_link,
                             title: recipe_title,
                             img_url: recipe_img_url
                         });

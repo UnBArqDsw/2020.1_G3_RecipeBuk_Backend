@@ -7,7 +7,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/search', (req, res) => {
-    let crawler = new Crawler(req.query.q);
+    let crawler = new Crawler(req.query.q, req.query.page);
     crawler.getResults().then((results) => {
         res.json(results);
     });
