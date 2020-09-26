@@ -1,18 +1,10 @@
-const dbConnect = require("./config/dbConfig");
+const db = require("./db/dbConfig");
 
 var express = require('express')
 var app = express()
-var retries = 5;
-while (retries) {
-  try {
-    dbConnect();
-    break;
-  } catch (err) {
-    retries -= 1;
-    console.log(err);
-    console.log("Retries left:" + retries);
-  }
-}
+
+db.query()
+
 app.get('/', function (req, res) {
   res.send('Recipe Buk')
 })
