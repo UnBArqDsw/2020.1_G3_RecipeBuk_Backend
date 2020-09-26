@@ -3,8 +3,6 @@ const db = require("./db/dbConfig");
 var express = require('express')
 var app = express()
 
-db.query()
-
 app.get('/', function (req, res) {
   res.send('Recipe Buk')
 })
