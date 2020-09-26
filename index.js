@@ -1,3 +1,5 @@
+const db = require("./db/dbConfig");
+
 var express = require('express')
 var app = express()
 
