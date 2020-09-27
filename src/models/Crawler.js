@@ -66,12 +66,12 @@ module.exports = class Crawler {
                         
                         let recipe_link = `https:${image_picture.attribs.href}`;
                         let recipe_img_url = `https:${image_picture.children[1].attribs.src}`;
-                        let recipe_title = recipe_text_info.children[1].children[0].data.replace(/\n/g, '');
+                        let recipe_title = recipe_text_info.children[1].children[0].data.replace(/\n/g, '').replace(/^\s+/g, '').replace(/\s+$/g, '');
 
                         results_gshow.push({
                             link: recipe_link,
                             title: recipe_title,
-                            img_url: recipe_img_url,
+                            img_url: recipe_img_url
                         });
                     }
                     this.search_results.push({name: 'Gshow', results_gshow: results_gshow});
