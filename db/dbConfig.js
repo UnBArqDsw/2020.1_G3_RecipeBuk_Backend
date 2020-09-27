@@ -10,7 +10,10 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
     if(err)
         console.log(err);
     else {
-        if(res.rowCount != 10) {
+        if(!res.rowCount) {
+            console.log("Database not found");
+            console.log("Creating");
+
             pool.query(`CREATE TABLE USER_ACCOUNT (
                             email VARCHAR(80) NOT NULL,
                             name VARCHAR(50) NOT NULL,
@@ -116,16 +119,17 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
                             if(err) {
                                 console.log("Failed creating Database");
                                 console.log(err);
+                            } else {
+                                console.log('Database \x1b[32mOK\x1b[0m');
                             }
                         });
         }
 
-        else {
-            res.rows.forEach((row) => {
-                console.log(`${row.tablename} \x1b[32mOK\x1b[0m`);
-            });
+        else if (res.rowCount != 10)
+            throw '\x1b[33mFaulty database in project\n\x1b[33mDelete dbdata and start project again';
+
+        else
             console.log('Database \x1b[32mOK\x1b[0m');
-        }
     }
 });
 
