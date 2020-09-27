@@ -47,6 +47,39 @@ module.exports = class Crawler {
                 done();
             }
         });
+
+        //Tudo Receitas
+        this.websites_queue.push({
+            uri: `https://www.tudoreceitas.com/pesquisa/q/${this.search_term}/pag/${this.search_page}`,
+            callback: (error, res, done) => {
+                if(error) {
+                    console.log(error);
+                } else {
+                    let $ = res.$;
+                    let result_cards = $(".resultado");
+                    let results = [];
+                    
+                    for(var c = 0; c < result_cards.length; c += 1) {
+                        let recipe_text_info = result_cards[c].children[3];
+                        let recipe_picture = result_cards[c].children[1];
+                        
+                        let recipe_link = recipe_text_info.attribs.href;
+                        let recipe_title = recipe_text_info.children[0].data;
+                        let recipe_img_url = recipe_picture.children[1].attribs['data-imagen'];
+
+                        results.push({
+                            link: recipe_link,
+                            title: recipe_title,
+                            img_url: recipe_img_url
+                        });
+                    }
+
+                    this.search_results.push({name: 'tudoreceitas', results: results});
+                }
+
+                done();
+            }
+        });
     }
 
     getResults() {
