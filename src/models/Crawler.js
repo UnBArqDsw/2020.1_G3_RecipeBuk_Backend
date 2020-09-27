@@ -50,7 +50,7 @@ module.exports = class Crawler {
 
         //GShow Receitas    
         this.websites_queue.push({
-            uri: `https://gshow.globo.com/busca/?q=${this.search_term}`,
+            uri: `https://gshow.globo.com/busca/?q=${this.search_term}&page=${this.search_page}`,
             callback: (error, res, done) => {
                 if(error){
                     console.log(error);
@@ -74,7 +74,7 @@ module.exports = class Crawler {
                             img_url: recipe_img_url
                         });
                     }
-                    this.search_results.push({name: 'Gshow', results_gshow: results_gshow});
+                    this.search_results.push({name: 'Gshow', results: results_gshow});
                 }
                 done();
             }
@@ -82,7 +82,7 @@ module.exports = class Crawler {
 
         //Tastemade
         this.websites_queue.push({
-            uri: `https://www.tastemade.com.br/pesquisa?q=${this.search_term}`,
+            uri: `https://www.tastemade.com.br/pesquisa?q=${this.search_term}&${this.search_page}`,
             callback: (error, res, done) => {
                 if(error){
                     console.log(error);
@@ -107,7 +107,7 @@ module.exports = class Crawler {
                             img_url: 'https://www.callinvest.com.br/wp-content/uploads/2017/08/indisponivel.png',
                         });
                     }
-                    this.search_results.push({name: 'tastemade', results_tastemade: results_tastemade});
+                    this.search_results.push({name: 'tastemade', results: results_tastemade});
                 }
                 done();
             }
