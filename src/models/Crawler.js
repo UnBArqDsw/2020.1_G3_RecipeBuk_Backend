@@ -47,6 +47,38 @@ module.exports = class Crawler {
                 done();
             }
         });
+
+        //GShow Receitas
+        this.websites_queue.push({
+            uri: `https://gshow.globo.com/busca/?q=${this.search_term}`,
+            callback: (error, res, done) => {
+                if(error){
+                    console.log(error);
+                } else {
+                    let $ = res.$;
+                    let recipe = $(".widget.widget--info");
+                    let results_gshow = [];
+
+                    for(var c = 0; c < recipe.length; c+=1){
+                        let recipe_info = recipe[c].children;
+                        let image_picture = recipe_info[3].children[1];
+                        let recipe_text_info = recipe_info[5].children[3];
+                        
+                        let recipe_link = `https:${image_picture.attribs.href}`;
+                        let recipe_img_url = `https:${image_picture.children[1].attribs.src}`;
+                        let recipe_title = recipe_text_info.children[1].children[0].data.replace(/\n/g, '');
+
+                        results_gshow.push({
+                            link: recipe_link,
+                            title: recipe_title,
+                            img_url: recipe_img_url,
+                        })
+                    }
+                    this.search_results.push({name: 'Gshow', results_gshow: results_gshow});
+                }
+                done();
+            }
+        });
     }
 
     getResults() {
