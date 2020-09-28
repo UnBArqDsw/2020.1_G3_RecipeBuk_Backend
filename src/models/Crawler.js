@@ -124,7 +124,7 @@ module.exports = class Crawler {
                     let result_cards = $(".resultado");
                     let results = [];
 
-                    if(this.search_page <= Math.ceil(parseInt($(".titulo--search").text().match(/\d+/)[0])/40)) {
+                    if(this.search_page <= Math.ceil(parseInt($(".titulo--search").text().replace(/\./g, '').match(/\d+/)[0])/40)) {
                         for(var c = 0; c < result_cards.length; c += 1) {
                             let recipe_text_info = result_cards[c].children[3];
                             let recipe_picture = result_cards[c].children[1];
