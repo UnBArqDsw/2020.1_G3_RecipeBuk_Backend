@@ -16,7 +16,7 @@ module.exports = class Crawler {
     generate_websites_queue() {
         //Tudo Gostoso
         this.websites_queue.push({
-            uri: `https://www.tudogostoso.com.br/busca?q=${this.search_term}&page=${this.search_page}`,
+            uri: `https://www.tudogostoso.com.br/busca?q=${encodeURIComponent(this.search_term)}&page=${encodeURIComponent(this.search_page)}`,
             callback: (error, res, done) => {
                 if(error) {
 					this.search_results.push({name: 'tudogostoso', error: 503, results: []});
@@ -56,7 +56,7 @@ module.exports = class Crawler {
       
         //GShow Receitas    
         this.websites_queue.push({
-            uri: `https://gshow.globo.com/busca/?q=${this.search_term}&page=${this.search_page}`,
+            uri: `https://gshow.globo.com/busca/?q=${encodeURIComponent(this.search_term)}&page=${encodeURIComponent(this.search_page)}`,
             callback: (error, res, done) => {
                 if(error){
 					this.search_results.push({name: 'Gshow', error: 503, results: []});
@@ -94,7 +94,7 @@ module.exports = class Crawler {
 
         //Tastemade
         this.websites_queue.push({
-            uri: `https://www.tastemade.com.br/pesquisa?q=${this.search_term}&${this.search_page}`,
+            uri: `https://www.tastemade.com.br/pesquisa?q=${encodeURIComponent(this.search_term)}&${encodeURIComponent(this.search_page)}`,
             callback: (error, res, done) => {
                 if(error){
 					this.search_results.push({name: 'tastemade', error: 503, results: []});
@@ -133,7 +133,7 @@ module.exports = class Crawler {
       
         //Tudo Receitas
         this.websites_queue.push({
-            uri: `https://www.tudoreceitas.com/pesquisa/q/${this.search_term}/pag/${this.search_page}`,
+            uri: `https://www.tudoreceitas.com/pesquisa/q/${encodeURIComponent(this.search_term)}/pag/${encodeURIComponent(this.search_page)}`,
             callback: (error, res, done) => {
                 if(error) {
 					this.search_results.push({name: 'tudoreceitas', error: 503, results: []});
