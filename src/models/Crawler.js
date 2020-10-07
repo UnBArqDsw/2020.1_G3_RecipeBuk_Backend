@@ -60,7 +60,6 @@ module.exports = class Crawler {
             callback: (error, res, done) => {
                 if(error){
 					this.search_results.push({name: 'Gshow', error: 503, results: []});
-                    console.log(error);
                 } else {
 					try {
 						let $ = res.$;
@@ -87,7 +86,6 @@ module.exports = class Crawler {
 					
 					catch(e) {
 						this.search_results.push({name: 'Gshow', error: 500, results: []});
-						console.log(e);
 					}
                 }
                 done();
@@ -100,7 +98,6 @@ module.exports = class Crawler {
             callback: (error, res, done) => {
                 if(error){
 					this.search_results.push({name: 'tastemade', error: 503, results: []});
-                    console.log(error);
                 } else {
 					try {
 						let $ = res.$;
@@ -128,7 +125,6 @@ module.exports = class Crawler {
 					
 					catch(e) {
 						this.search_results.push({name: 'tastemade', error: 500, results: []});
-						console.log(e);
 					}
                 }
               done();
@@ -141,7 +137,6 @@ module.exports = class Crawler {
             callback: (error, res, done) => {
                 if(error) {
 					this.search_results.push({name: 'tudoreceitas', error: 503, results: []});
-                    console.log(error);
                 } else {
 					try {
 						let $ = res.$;
@@ -170,7 +165,6 @@ module.exports = class Crawler {
 					
 					catch(e) {
 						this.search_results.push({name: 'tudoreceitas', error: 500, results: []});
-						console.log(e);
 					}
                 }
                 done();
