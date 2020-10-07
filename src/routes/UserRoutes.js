@@ -1,19 +1,34 @@
 const express = require('express');
 const routes = express.Router();
 const userRepository = require('../Repository/UserRepository');
+require("firebase/auth");
+var firebase = require("firebase/app");
 
 
 routes.post('/createUser', async (req, res, next) => {
     var body = req.body;
     var result = "Sucesso";
     userRepository.addUser(body.name, body.email).then(async () => {
-        result = await userRepository.registerUser(body.email, body.password);
-        console.log(result)
-        res.json({
-            Message: result
+        firebase.auth().createUserWithEmailAndPassword(body.email, body.password).then(() => {
+            Message = "Usuário registrado!"
+        }).catch(e => {
+            
+            res.status(500).json({
+                Message: e
+            })
         })
 
+        }).catch(e => {
+            res.status(500).json({
+                Message: e
+            })
+        })
+    firebase.auth().createUserWithEmailAndPassword(body.email, body.password).then(() => {
+        Message = "Usuário registrado!"
+    }).catch(e => {
+        Message = e;
     })
+    
 
 });
 
@@ -31,36 +46,5 @@ routes.post('/deleteUser', async (req, res, next) => {
     })
 });
 
-routes.post('/login', async (req, res, next) => {
-    var body = req.body;
-    var result;
-     userRepository.signIn(body.email, body.password).then((res) => {
-        res.json({
-            Message: res
-        })
-    }).catch(err => {
-        result = err;
-        res.json({
-            Message: err
-        })
-    });
-
-
-});
-
-routes.get('/signOut', async (req, res, next) => {
-    var body = req.body;
-    var result;
-     userRepository.signOut(body.email, body.password).then((res) => [
-        res.json({
-            Message: res
-        })
-    ]).catch(err => {
-        result = err;
-        res.json({
-            Message: err
-        })
-    });
-});
 
 module.exports = routes;

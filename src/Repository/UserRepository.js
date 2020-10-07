@@ -7,31 +7,18 @@ async function addUser(name, email) {
         text: "INSERT INTO USER_ACCOUNT(name, email) VALUES($1, $2)",
         values: [name, email],
     }
-    try{
+    
     db.query(query, (err, res) => {
         if (err) {
             console.log("Erro: ", err);
+            return err;
             
         } else {
             console.log("Usuário adicionado!", res);
+            return "Usuário adicionado!"
         }
     })
-    } catch(err) {
 
-    }
-}
-
-async function registerUser(email, password) {
-    var errorMessage;
-    firebase.auth().createUserWithEmailAndPassword(email, password).then(() => {
-        return "Usuário registrado!"
-    }).catch(function (error) {
-        var errorCode = error.code;
-         errorMessage = error.message;
-
-        return errorMessage;
-    });
-    
 }
 
 async function deleteUser(email) {
@@ -50,26 +37,5 @@ async function deleteUser(email) {
     })
 }
 
-async function signIn(email, password) {
-    firebase.auth().signInWithEmailAndPassword(email, password).then(()=>{
-        console.log("Usuário logado")
-        return "Usuário logado"
-    }).catch(function (error) {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        console.log(errorMessage);
-        return errorMessage;
-    });
-}
 
-async function signOut() {
-    firebase.auth().signOut().then(function () {
-        console.log('sign out successful')
-        return "sign out successful"
-    }).catch(function (error) {
-        console.log(error)
-        return error
-    });
-}
-
-module.exports = { addUser, deleteUser, registerUser, signIn, signOut };
+module.exports = { addUser, deleteUser};

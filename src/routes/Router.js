@@ -1,7 +1,7 @@
 const express = require('express');
 const userRoutes = require('./UserRoutes');
 const homeRoutes = require('./homeRouter');
-const userRepository = require('../Repository/UserRepository');
+const crawlerRoutes = require('./CrawlerRoutes');
 const router = express.Router();
 
 router.get('/', (req, res) => {
@@ -11,5 +11,5 @@ router.get('/', (req, res) => {
     });
 });
 module.exports = (app) => {
-    app.use('/', [userRoutes],[homeRoutes]);
+    app.use('/', [userRoutes],[homeRoutes], [crawlerRoutes]);
 };
