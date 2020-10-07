@@ -1,20 +1,14 @@
-const db = require("./db/dbConfig");
+const bodyParser = require('body-parser')
+const configRoutes = require('./src/routes/Router');
+const firebaseConfig = require('./config/configFirebase');
+var express = require('express')
+var app = express()
 
-var express = require('express');
-var app = express();
-const Crawler = require('./src/models/Crawler');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get('/', function (req, res) {
-  res.send('Recipe Buk');
-});
+require('./src/routes/Router')(app);
+configRoutes(app)
+firebaseConfig()
 
-app.get('/search', (req, res) => {
-    let crawler = new Crawler(req.query.q, req.query.page);
-    crawler.getResults().then((results) => {
-        res.json(results);
-    });
-});
-
-app.listen(3000, function () {
-  console.log('Recipe Buk Backend listening on port 3000!');
-});
+app.listen(3000)

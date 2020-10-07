@@ -17,9 +17,7 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
             pool.query(`CREATE TABLE USER_ACCOUNT (
                             email VARCHAR(80) NOT NULL,
                             name VARCHAR(50) NOT NULL,
-                            password_hash CHAR(32) NOT NULL,
-                            birthdate DATE NOT NULL,
-	                        
+                            
 	                        CONSTRAINT USER_ACCOUNT_PK PRIMARY KEY (email)
                         );
 
