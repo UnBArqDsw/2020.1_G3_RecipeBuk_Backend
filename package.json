@@ -4,7 +4,7 @@
   "description": "<p align=\"center\">     <img src=\"logo.svg\" alt=\"Logo RecipeBuk\" width='50%'/> </p>",
   "main": "index.js",
   "scripts": {
-    "test": "nyc mocha src/tests --exit --reporter mocha-junit-reporter ",
+    "test": "nyc --reporter=cobertura --reporter=text mocha src/tests",
     "start": "node index.js",
     "start-dev": "nodemon index.js"
   },
