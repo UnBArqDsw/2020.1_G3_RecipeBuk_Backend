@@ -2,6 +2,7 @@ const express = require('express');
 const userRoutes = require('./UserRoutes');
 const homeRoutes = require('./homeRouter');
 const crawlerRoutes = require('./CrawlerRoutes');
+const recipes = require('./recipesRoutes');
 const router = express.Router();
 
 router.get('/', (req, res) => {
@@ -11,5 +12,5 @@ router.get('/', (req, res) => {
     });
 });
 module.exports = (app) => {
-    app.use('/', [userRoutes],[homeRoutes], [crawlerRoutes]);
+    app.use('/', [userRoutes],[homeRoutes], [crawlerRoutes], [recipesRoutes]);
 };
