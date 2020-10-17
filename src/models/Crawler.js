@@ -53,44 +53,6 @@ module.exports = class Crawler {
                 done();
             }
         });
-      
-        //GShow Receitas    
-        this.websites_queue.push({
-            uri: `https://gshow.globo.com/busca/?q=${encodeURIComponent(this.search_term)}&page=${encodeURIComponent(this.search_page)}`,
-            callback: (error, res, done) => {
-                if(error){
-					this.search_results.push({name: 'Gshow', error: 503, results: []});
-                } else {
-					try {
-						let $ = res.$;
-						let recipe = $(".widget.widget--info");
-						let results_gshow = [];
-
-						for(var c = 0; c < recipe.length; c+=1){
-							let recipe_info = recipe[c].children;
-							let image_picture = recipe_info[3].children[1];
-							let recipe_text_info = recipe_info[5].children[3];
-							
-							let recipe_link = `https:${image_picture.attribs.href}`;
-							let recipe_img_url = `https:${image_picture.children[1].attribs.src}`;
-							let recipe_title = recipe_text_info.children[1].children[0].data.replace(/\n/g, '').replace(/^\s+/g, '').replace(/\s+$/g, '');
-
-							results_gshow.push({
-								link: recipe_link,
-								title: recipe_title,
-								img_url: recipe_img_url
-							});
-						}
-						this.search_results.push({name: 'Gshow', results: results_gshow});
-					}
-					
-					catch(e) {
-						this.search_results.push({name: 'Gshow', error: 500, results: []});
-					}
-                }
-                done();
-            }
-        });
 
         //Tastemade
         this.websites_queue.push({
