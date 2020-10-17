@@ -19,7 +19,7 @@ module.exports = class Crawler {
             uri: `https://www.tudogostoso.com.br/busca?q=${encodeURIComponent(this.search_term)}&page=${encodeURIComponent(this.search_page)}`,
             callback: (error, res, done) => {
                 if(error) {
-					this.search_results.push({name: 'tudogostoso', error: 503, results: []});
+					this.search_results.push({name: 'TudoGostoso', error: 503, results: []});
                 } else {
 					try {
 						let $ = res.$;
@@ -42,11 +42,11 @@ module.exports = class Crawler {
 							});
 						}
 
-						this.search_results.push({name: 'tudogostoso', results: results});
+						this.search_results.push({name: 'TudoGostoso', results: results});
 					}
 					
 					catch(e) {
-						this.search_results.push({name: 'tudogostoso', error: 500, results: []});
+						this.search_results.push({name: 'TudoGostoso', error: 500, results: []});
 					}
 				}
 
@@ -59,7 +59,7 @@ module.exports = class Crawler {
             uri: `https://www.tastemade.com.br/pesquisa?q=${encodeURIComponent(this.search_term)}&${encodeURIComponent(this.search_page)}`,
             callback: (error, res, done) => {
                 if(error){
-					this.search_results.push({name: 'tastemade', error: 503, results: []});
+					this.search_results.push({name: 'Tastemade', error: 503, results: []});
                 } else {
 					try {
 						let $ = res.$;
@@ -82,11 +82,11 @@ module.exports = class Crawler {
 								img_url: 'https://www.callinvest.com.br/wp-content/uploads/2017/08/indisponivel.png',
 							});
 						}
-						this.search_results.push({name: 'tastemade', results: results_tastemade});
+						this.search_results.push({name: 'Tastemade', results: results_tastemade});
 					}
 					
 					catch(e) {
-						this.search_results.push({name: 'tastemade', error: 500, results: []});
+						this.search_results.push({name: 'Tastemade', error: 500, results: []});
 					}
                 }
               done();
@@ -98,7 +98,7 @@ module.exports = class Crawler {
             uri: `https://www.tudoreceitas.com/pesquisa/q/${encodeURIComponent(this.search_term)}/pag/${encodeURIComponent(this.search_page)}`,
             callback: (error, res, done) => {
                 if(error) {
-					this.search_results.push({name: 'tudoreceitas', error: 503, results: []});
+					this.search_results.push({name: 'TudoReceitas', error: 503, results: []});
                 } else {
 					try {
 						let $ = res.$;
@@ -122,11 +122,11 @@ module.exports = class Crawler {
 							}
 						}
 
-						this.search_results.push({name: 'tudoreceitas', results: results});
+						this.search_results.push({name: 'TudoReceitas', results: results});
 					}
 					
 					catch(e) {
-						this.search_results.push({name: 'tudoreceitas', error: 500, results: []});
+						this.search_results.push({name: 'TudoReceitas', error: 500, results: []});
 					}
                 }
                 done();

@@ -8,10 +8,10 @@ describe('Crawler', () => {
 	let test_crawler = new Crawler('bolo');
 	
 	test_crawler.getResults().then((results) => {
-		results.should.be.a('Array').that.has.lengthOf(4);
+		results.should.be.a('Array').that.has.lengthOf(3);
 		
 		results.forEach((result) => {
-			result.should.have.property('name').to.be.oneOf(['tudogostoso', 'tastemade', 'tudoreceitas', 'Gshow']);
+			result.should.have.property('name').to.be.oneOf(['TudoGostoso', 'Tastemade', 'TudoReceitas']);
 			
 			if(result.error) {
 				result.error.should.be.a('Number').that.is.oneOf([500, 503]);
