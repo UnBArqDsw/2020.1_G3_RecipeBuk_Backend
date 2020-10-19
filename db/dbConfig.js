@@ -3,7 +3,11 @@ const { Pool, Client } = require('pg');
 const connectionString = process.env.DB_URL;
 
 const pool = new Pool({
-  connectionString: connectionString,
+  host: process.env.DB_URL,
+  DB: process.env.DB,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  port: 5432
 });
 
 pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema'", (err, res) => {

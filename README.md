@@ -2,6 +2,11 @@
     <img src="logo.svg" alt="Logo RecipeBuk" width='50%'/>
 </p>
 
+[![Build Status](https://dev.azure.com/170102343/RecipeBuk/_apis/build/status/RecipeBuk-CI?repoName=UnBArqDsw%2F2020.1_G3_RecipeBuk_Backend&branchName=95-config-ci)](https://dev.azure.com/170102343/RecipeBuk/_build/latest?definitionId=2&repoName=UnBArqDsw%2F2020.1_G3_RecipeBuk_Backend&branchName=95-config-ci)
+
+![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/170102343/RecipeBuk/2)
+
+
 # RecipeBük
 
 Toda a nossa documentação está disponível para visualização em: http://www.recipebukdocs.tk/
