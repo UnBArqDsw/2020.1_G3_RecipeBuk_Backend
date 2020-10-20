@@ -19,12 +19,12 @@ routes.post('/createUser', async (req, res, next) => {
                     Message: "Usuário registrado!"
                 })
             }).catch(e => {
+                userRepository.deleteUser(body.email);
                 res.status(500).json({
                     Message: e
                 })
             })
         }
-       
         }).catch(e => {
             res.status(500).json({
                 Message: e
