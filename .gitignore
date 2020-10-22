@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 /.nyc_output/
+test-results.xml
 # Only exists if Bazel was run
 /bazel-out
 
