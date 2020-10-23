@@ -55,7 +55,7 @@ async function addCategory(category) {
     })
 }
 
-async function addCategory(ingredient) {
+async function addIngredient(ingredient) {
     const query = {
         text: "INSERT INTO INGREDIENT(name) VALUES($2)", 
         values: [ingredient],
@@ -90,4 +90,5 @@ async function addUses(unity, quantity) {
         }
     })
 }
+
 
