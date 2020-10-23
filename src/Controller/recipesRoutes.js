@@ -1,11 +1,11 @@
 const express = require('express');
 const routes = express.Router();
-const RecipesResgistration = require('../models/RecipesRegistration');
+const recipeRepository = require('../Repository/RecipesRepository');
 
 routes.post('/addRecipe', async (req, res, next) => {
     var body = req.body;
     
-    RecipesRepository.addRecipe(body.recipeName, body.time, body.yeld).then(ret => {
+    recipeRepository.addRecipe(body.recipeName, body.time, body.yieldi).then(ret => {
         if(ret.name == "error"){
             res.status(500).json({
                 Message: ret.detail
@@ -21,7 +21,7 @@ routes.post('/addRecipe', async (req, res, next) => {
 routes.post('/addStep', async (req, res, next) => {
     var body = req.body;
     
-    RecipesRepository.addStep(body.preparationMode).then(ret => {
+    recipeRepository.addStep(body.preparationMode).then(ret => {
         if(ret.name == "error"){
             res.status(500).json({
                 Message: ret.detail
@@ -37,7 +37,7 @@ routes.post('/addStep', async (req, res, next) => {
 routes.post('/addCategory', async (req, res, next) => {
     var body = req.body;
     
-    RecipesRepository.addCategory(body.category).then(ret => {
+    recipeRepository.addCategory(body.category).then(ret => {
         if(ret.name == "error"){
             res.status(500).json({
                 Message: ret.detail
@@ -55,7 +55,7 @@ routes.post('/addCategory', async (req, res, next) => {
 routes.post('/addIngredient', async (req, res, next) => {
     var body = req.body;
     
-    RecipesRepository.addIngredient(body.ingredient).then(ret => {
+    recipeRepository.addIngredient(body.ingredient).then(ret => {
         if(ret.name == "error"){
             res.status(500).json({
                 Message: ret.detail
@@ -71,7 +71,7 @@ routes.post('/addIngredient', async (req, res, next) => {
 routes.post('/addUses', async (req, res, next) => {
     var body = req.body;
     
-    RecipesRepository.addUses(body.unity. body.quantity).then(ret => {
+    recipeRepository.addUses(body.unity. body.quantity).then(ret => {
         if(ret.name == "error"){
             res.status(500).json({
                 Message: ret.detail
@@ -87,7 +87,7 @@ routes.post('/addUses', async (req, res, next) => {
 routes.post('/deleteRecipe', async (req, res, next) => {
     var body = req.body;
     
-    RecipesRepository.deleteRecipe(body.recipeName).then(ret => {
+    recipeRepository.deleteRecipe(body.recipeName).then(ret => {
         if(ret.name == "error"){
             res.status(500).json({
                 Message: ret.detail
@@ -103,7 +103,7 @@ routes.post('/deleteRecipe', async (req, res, next) => {
 routes.post('/deleteStep', async (req, res, next) => {
     var body = req.body;
     
-    RecipesRepository.deleteStep(body.preparationMode).then(ret => {
+    recipeRepository.deleteStep(body.preparationMode).then(ret => {
         if(ret.name == "error"){
             res.status(500).json({
                 Message: ret.detail
@@ -119,7 +119,7 @@ routes.post('/deleteStep', async (req, res, next) => {
 routes.post('/deleteCategory', async (req, res, next) => {
     var body = req.body;
     
-    RecipesRepository.deleteCategory(body.category).then(ret => {
+    recipeRepository.deleteCategory(body.category).then(ret => {
         if(ret.name == "error"){
             res.status(500).json({
                 Message: ret.detail
@@ -135,7 +135,7 @@ routes.post('/deleteCategory', async (req, res, next) => {
 routes.post('/deleteIngredient', async (req, res, next) => {
     var body = req.body;
     
-    RecipesRepository.deleteIngredient(body.ingredient).then(ret => {
+    recipeRepository.deleteIngredient(body.ingredient).then(ret => {
         if(ret.name == "error"){
             res.status(500).json({
                 Message: ret.detail
@@ -151,7 +151,7 @@ routes.post('/deleteIngredient', async (req, res, next) => {
 routes.post('/deleteUses', async (req, res, next) => {
     var body = req.body;
     
-    RecipesRepository.deleteUses(body.unity).then(ret => {
+    recipeRepository.deleteUses(body.unity).then(ret => {
         if(ret.name == "error"){
             res.status(500).json({
                 Message: ret.detail

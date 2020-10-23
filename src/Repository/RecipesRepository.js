@@ -1,10 +1,10 @@
 
 const db = require('../../db/dbConfig');
 
-async function addRecipe(recipeName, time, yield) {
+async function addRecipe(recipeName, time, yieldi) {
     const query = {
         text: "INSERT INTO RECIPE(name, time, portions) VALUES($1, $2, $3)", 
-        values: [recipeName, time, yield],
+        values: [recipeName, time, yieldi],
     }
     
     db.query(query, (err, res) => {
@@ -165,3 +165,6 @@ async function deleteUses(unity) {
     }
     return result;
 }
+
+
+module.exports = { addRecipe, addStep, addCategory, addIngredient, addUses, deleteRecipe, deleteStep, deleteCategory, deleteIngredient, deleteUses};
