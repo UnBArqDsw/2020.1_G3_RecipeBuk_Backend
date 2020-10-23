@@ -55,7 +55,7 @@ async function addCategory(category) {
     })
 }
 
-async function addCategory(ingredient) {
+async function addIngredient(ingredient) {
     const query = {
         text: "INSERT INTO INGREDIENT(name) VALUES($2)", 
         values: [ingredient],
@@ -91,3 +91,77 @@ async function addUses(unity, quantity) {
     })
 }
 
+async function deleteRecipe(recipeName) {
+    const query = {
+        text: "DELETE FROM RECIPE WHERE recipeName = $1",
+        values: [recipeName],
+    }
+    var result;
+    try{
+        result = await db.query(query)
+    } catch(err) {
+        console.error(err)
+        result = err;
+    }
+    return result;
+}
+
+async function deleteStep(preparationMode) {
+    const query = {
+        text: "DELETE FROM STEP WHERE preparationMode = $3",
+        values: [preparationMode],
+    }
+    var result;
+    try{
+        result = await db.query(query)
+    } catch(err) {
+        console.error(err)
+        result = err;
+    }
+    return result;
+}
+
+async function deleteCategory(category) {
+    const query = {
+        text: "DELETE FROM CATEGORY WHERE category = $2",
+        values: [category],
+    }
+    var result;
+    try{
+        result = await db.query(query)
+    } catch(err) {
+        console.error(err)
+        result = err;
+    }
+    return result;
+}
+
+async function deleteIngredient(ingredient) {
+    const query = {
+        text: "DELETE FROM INGREDIENT WHERE ingredient = $2",
+        values: [ingredient],
+    }
+    var result;
+    try{
+        result = await db.query(query)
+    } catch(err) {
+        console.error(err)
+        result = err;
+    }
+    return result;
+}
+
+async function deleteUses(unity) {
+    const query = {
+        text: "DELETE FROM uses WHERE unity = $3",
+        values: [unity],
+    }
+    var result;
+    try{
+        result = await db.query(query)
+    } catch(err) {
+        console.error(err)
+        result = err;
+    }
+    return result;
+}
