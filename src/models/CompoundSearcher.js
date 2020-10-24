@@ -1,28 +1,27 @@
-import Searcher from './Searcher.js';
+const Searcher = require('./Searcher.js');
 
+var children;
 module.exports = class CompoundSearcher extends Searcher {
 	constructor() {
 		super();
 		this.children = [];
+		children = this.children;
 	}
 
 	addChild(child) {
-		children.push(child);
+		this.children.push(child);
 	}
 
 	getResults() {
-		return new Promise((resolve, reject) => {
+		return new Promise(async function(resolve, reject) {
 			let results = [];
 
-			children.forEach((child) => {
-				child.getResults().then(result => results.push(result));
-			});
+			for(let child of children) {
+				let result = await child.getResults();
+				results.push(result);
+			}
 
 			resolve(results);
 		});
 	}
 }
-
-			- CompoundSearcher
-//Searcher -: - Crawler
-			- DatabaseSearcher

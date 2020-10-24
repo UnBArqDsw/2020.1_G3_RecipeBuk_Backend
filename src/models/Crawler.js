@@ -1,4 +1,4 @@
-import Searcher from './Searcher.js';
+const Searcher = require('./Searcher.js');
 const crawler = require('crawler');
 
 module.exports = class Crawler extends Searcher {

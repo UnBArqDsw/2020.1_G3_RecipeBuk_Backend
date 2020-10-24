@@ -1,6 +1,6 @@
 module.exports = class Searcher {
 	constructor() {
-		if(new.target === Search)
+		if(new.target === Searcher)
 			throw new TypeError("Attempt to instance Abstract Class Search");
 	}
 
@@ -10,7 +10,3 @@ module.exports = class Searcher {
 
 	getResults() {}
 }
-
-			- CompoundSearcher
-//Searcher -: - Crawler
-			- DatabaseSearcher

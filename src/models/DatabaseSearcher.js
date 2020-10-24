@@ -1,4 +1,4 @@
-import Searcher from './Searcher.js';
+const Searcher = require('./Searcher.js');
 
 module.exports = class DatabaseSearcher extends Searcher {
 	constructor(connection, searchTerm) {
@@ -8,10 +8,9 @@ module.exports = class DatabaseSearcher extends Searcher {
 	}
 
 	getResults() {
-		/*return new Promise((resolve, reject) => {
-			let results = [];
-
-			resolve(results);
-		});*/
+		return new Promise((resolve, reject) => {
+			console.log("Not implemented");
+			resolve([]);
+		});
 	}
 }
