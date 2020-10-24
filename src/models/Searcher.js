@@ -4,9 +4,5 @@ module.exports = class Searcher {
 			throw new TypeError("Attempt to instance Abstract Class Search");
 	}
 
-	//setSearchTerm(searchTerm) {}
-
-	//setPage(page) {}
-
 	getResults() {}
 }
