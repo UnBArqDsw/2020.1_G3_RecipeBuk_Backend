@@ -1,11 +1,9 @@
 const Searcher = require('./Searcher.js');
 
-var children;
 module.exports = class CompoundSearcher extends Searcher {
 	constructor() {
 		super();
 		this.children = [];
-		children = this.children;
 	}
 
 	addChild(child) {
@@ -13,10 +11,11 @@ module.exports = class CompoundSearcher extends Searcher {
 	}
 
 	getResults() {
+		var self = this;
 		return new Promise(async function(resolve, reject) {
 			let results = [];
 
-			for(let child of children) {
+			for(let child of self.children) {
 				let result = await child.getResults();
 				results.push(result);
 			}
