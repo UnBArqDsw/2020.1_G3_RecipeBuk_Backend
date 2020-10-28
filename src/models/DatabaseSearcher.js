@@ -9,7 +9,7 @@ module.exports = class DatabaseSearcher extends Searcher {
 
 	getResults() {
 		return new Promise((resolve, reject) => {
-			this.connection.query("SELECT recipeId, name, time, portions FROM recipe WHERE visibility = TRUE", (err, res) => {
+			this.connection.query(`SELECT recipeId, name, time, portions FROM recipe WHERE visibility = TRUE AND LOWER(name) LIKE '%${decodeURIComponent(this.searchTerm).toLowerCase()}%'`, (err, res) => {
 				if(err) {
 					console.log(err);
 					resolve([]);
