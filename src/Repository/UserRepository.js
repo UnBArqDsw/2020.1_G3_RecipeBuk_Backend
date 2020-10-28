@@ -1,25 +1,18 @@
 const db = require('../../db/dbConfig');
-const User = require('../models/User');
-require("firebase/auth");
-var firebase = require("firebase/app");
 
 async function addUser(name, email) {
     const query = {
         text: "INSERT INTO USER_ACCOUNT(name, email) VALUES($1, $2)",
         values: [name, email],
     }
-    
-    db.query(query, (err, res) => {
-        if (err) {
-            console.log("Erro: ", err);
-            return err;
-            
-        } else {
-            console.log("Usuário adicionado!", res);
-            return "Usuário adicionado!"
-        }
-    })
-
+    var result;
+    try{
+     result = await db.query(query)
+    } catch(err) {
+        console.error(err);
+        result = err;
+    }
+    return result
 }
 
 async function deleteUser(email) {
@@ -27,15 +20,14 @@ async function deleteUser(email) {
         text: "DELETE FROM USER_ACCOUNT WHERE email = $1",
         values: [email],
     }
-    db.query(query, (err, res) => {
-        if (err) {
-            console.log("Erro: ", err);
-            return err;
-        } else {
-            console.log("Usuário removido!", res);
-            return res;
-        }
-    })
+    var result;
+    try{
+        result = await db.query(query)
+    } catch(err) {
+        console.error(err)
+        result = err;
+    }
+    return result;
 }
 
 async function login(email, password){
