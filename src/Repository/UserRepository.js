@@ -1,4 +1,5 @@
 const db = require('../../db/dbConfig');
+const User = require('../models/User');
 require("firebase/auth");
 var firebase = require("firebase/app");
 
@@ -37,5 +38,24 @@ async function deleteUser(email) {
     })
 }
 
+async function login(email, password){
+    let user = new User();
+    const query = {
+        text: "SELECT * FROM USER_ACCOUNT WHERE email = $1",
+        values: [email],
+    }
+    db.query(query, (err, res) => {
+        if (err) {
+            console.log("Erro: ", err);
+            return err;
+        } else {
+            console.log(res);
+            user.email = res.email;
+            user.name = res.name;
+            //firebase.auth
+        }
+    })
+    return user;
+}
 
-module.exports = { addUser, deleteUser};
+module.exports = { addUser, deleteUser, login};
