@@ -53,22 +53,23 @@ async function login(email) {
 
 }
 
-async function updateUser(email,name) {
-
+async function updateUser(users) {
+    console.log('body', users);
+    let result;
     const query = {
-        text: "UPDATE USER_ACCOUNT SET name = $1 WHERE email = $2",
-        values: [name,email],
+        text: "UPDATE USER_ACCOUNT SET name = $1, email = $2 WHERE email = $3",
+        values: [users.newUser.name, users.newUser.email, users.oldUser.email],
     }
     try {
         result = await db.query(query);
         console.log(result);
         const query2 = {
             text: "SELECT * FROM USER_ACCOUNT WHERE email = $1",
-            values: [email],
+            values: [users.newUser.email],
         }
         try {
-            result = await db.query(query2);
-            console.log(result.rows[0].name)
+            const result2 = await db.query(query2);
+            console.log(result2)
         } catch (err) {
             console.error(err)
         }
@@ -76,8 +77,9 @@ async function updateUser(email,name) {
         console.error(err)
         return err;
     }
+    console.log('asdasdasd', result);
     if (result.rowCount > 0) {
-        let user = new User(email, name);
+        let user = new User(users.newUser.email, users.newUser.name);
         return user;
     } else {
         return "Usuário não encontrado"
