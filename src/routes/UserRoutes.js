@@ -1,6 +1,7 @@
 const express = require('express');
 const routes = express.Router();
 const userRepository = require('../Repository/UserRepository');
+const db = require('../../db/dbConfig');
 require("firebase/auth");
 var firebase = require("firebase/app");
 
@@ -46,5 +47,23 @@ routes.post('/deleteUser', async (req, res, next) => {
     })
 });
 
+routes.post('/getFavorites', (req, res) => {
+    let favorites = [];
+
+    db.query(`SELECT FAVORITE.recipeLink
+                FROM USER_SESSION INNER JOIN USER_ACCOUNT ON USER_ACCOUNT.email = USER_SESSION.userEmail
+                INNER JOIN FAVORITE ON FAVORITE.userEmail = USER_ACCOUNT.email
+                WHERE USER_SESSION.sessionId = '${req.body.auth}'`, (error, response) => {
+        if(error) {
+            console.log(error);
+            res.json([]);
+        }
+
+        else {
+            response.rows.forEach(row => favorites.push(row.recipelink));
+            res.json(favorites);
+        }
+    });
+});
 
 module.exports = routes;
