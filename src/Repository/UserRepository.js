@@ -54,7 +54,6 @@ async function login(email) {
 }
 
 async function updateUser(users) {
-    console.log('body', users);
     let result;
     const query = {
         text: "UPDATE USER_ACCOUNT SET name = $1, email = $2 WHERE email = $3",
@@ -62,14 +61,12 @@ async function updateUser(users) {
     }
     try {
         result = await db.query(query);
-        console.log(result);
         const query2 = {
             text: "SELECT * FROM USER_ACCOUNT WHERE email = $1",
             values: [users.newUser.email],
         }
         try {
             const result2 = await db.query(query2);
-            console.log(result2)
         } catch (err) {
             console.error(err)
         }
@@ -77,7 +74,6 @@ async function updateUser(users) {
         console.error(err)
         return err;
     }
-    console.log('asdasdasd', result);
     if (result.rowCount > 0) {
         let user = new User(users.newUser.email, users.newUser.name);
         return user;
