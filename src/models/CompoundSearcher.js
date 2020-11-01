@@ -17,7 +17,7 @@ module.exports = class CompoundSearcher extends Searcher {
 
 			for(let child of self.children) {
 				let result = await child.getResults();
-				results.push(result);
+				results = results.concat(result);
 			}
 
 			resolve(results);
