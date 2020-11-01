@@ -52,9 +52,7 @@ routes.post('/deleteUser', async (req, res, next) => {
 
 routes.post('/login', async (req, res, next) => {
     var body = req.body;
-    console.log(body);
     userRepository.login(body.email).then(ret => {
-        console.log(typeof (ret))
         if (typeof (ret) == "string") {
             res.status(500).json({
                 Message: ret
@@ -82,22 +80,20 @@ routes.post('/login', async (req, res, next) => {
 routes.post('/updateUser', async (req, res, next) => {
     var body = req.body;
     let userUid;
-    console.log(req.body);
     userRepository.updateUser(body).then(ret => {
         admin.auth().getUserByEmail(req.body.oldUser.email)
             .then(function (userRecord) {
                 userUid = userRecord.toJSON().uid;
-                // console.log('Successfully fetched user data:', userRecord.toJSON());
+
                 admin.auth().updateUser(userUid, {
                     email: req.body.newUser.email,
                     displayName: req.body.newUser.name
                 })
                     .then(function (userRecord) {
-                        // See the UserRecord reference doc for the contents of userRecord.
-                        console.log('Successfully updated user', userRecord.toJSON());
+
                         res.json({
-                                        Message: ret
-                                    })
+                            Message: ret
+                        })
                     })
                     .catch(function (error) {
                         console.log('Error updating user:', error);
@@ -108,7 +104,7 @@ routes.post('/updateUser', async (req, res, next) => {
             });
 
     }).catch(err => {
-        console.log('frombs', err)
+        console.log(err)
         res.status(500).json({
             Message: err
         });
