@@ -66,4 +66,27 @@ routes.post('/getFavorites', (req, res) => {
     });
 });
 
+routes.post('/favorite', (req, res) => {
+    db.query(`SELECT userEmail FROM USER_SESSION WHERE sessionId = '${req.body.auth}'`, (error, response) => {
+        if(error) {
+            console.log(error);
+            res.json({error: true});
+        }
+
+        else {
+            if(response.rows.length) {
+                db.query(`INSERT INTO FAVORITE VALUES ('${response.rows[0].useremail}', '${req.body.recipelink}')`, (error, response) => {
+                    if(error) {
+                        console.log(error);
+                        res.json({error: true});
+                    }
+
+                    else
+                        res.json({error: false});
+                });
+            }
+        }
+    });
+});
+
 module.exports = routes;
