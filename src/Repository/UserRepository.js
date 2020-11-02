@@ -84,4 +84,67 @@ async function updateUser(users) {
 
 }
 
-module.exports = { addUser, deleteUser, login, updateUser };
+function getFavorites(auth) {
+    return new Promise((resolve, reject) => {
+        let favorites = [];
+
+        db.query(`SELECT FAVORITE.recipeLink
+                    FROM USER_SESSION INNER JOIN USER_ACCOUNT ON USER_ACCOUNT.email = USER_SESSION.userEmail
+                    INNER JOIN FAVORITE ON FAVORITE.userEmail = USER_ACCOUNT.email
+                    WHERE USER_SESSION.sessionId = '${auth}'`, (error, response) => {
+            if(error) {
+                console.log(error);
+                resolve([]);
+            }
+
+            else {
+                response.rows.forEach(row => favorites.push(row.recipelink));
+                resolve(favorites);
+            }
+        });
+    });
+}
+
+function favorite(auth, recipelink) {
+    return new Promise((resolve, reject) => {
+        db.query(`SELECT userEmail FROM USER_SESSION WHERE sessionId = '${auth}'`, (error, response) => {
+            if(error) {
+                console.log(error);
+                resolve({error: true});
+            }
+
+            else {
+                if(response.rows.length) {
+                    db.query(`INSERT INTO FAVORITE VALUES ('${response.rows[0].useremail}', '${recipelink}')`, (error, response) => {
+                        if(error) {
+                            if(error.code == 23505) {
+                                db.query(`DELETE FROM FAVORITE WHERE recipelink = '${recipelink}'`, (error, response) => {
+                                    if(error) {
+                                        console.log(error);
+                                        resolve({error: true});
+                                    }
+
+                                    else
+                                        resolve({error: false});
+                                })
+                            }
+
+                            else {
+                                console.log(error);
+                                resolve({error: true});
+                            }
+                        }
+
+                        else
+                            resolve({error: false});
+                    });
+                }
+
+                else
+                    resolve({error: true});
+            }
+        });
+    });
+}
+
+module.exports = { addUser, deleteUser, login, updateUser, getFavorites, favorite };

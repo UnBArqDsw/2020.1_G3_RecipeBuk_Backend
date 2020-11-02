@@ -1,6 +1,7 @@
 const express = require('express');
 const routes = express.Router();
 const userRepository = require('../Repository/UserRepository');
+const db = require('../../db/dbConfig');
 require("firebase/auth");
 var firebase = require("firebase/app");
 var admin = require('firebase-admin');
@@ -112,5 +113,12 @@ routes.post('/updateUser', async (req, res, next) => {
 
 });
 
+routes.post('/getFavorites', (req, res) => {
+    userRepository.getFavorites(req.body.auth).then(response => res.json(response));
+});
+
+routes.post('/favorite', (req, res) => {
+    userRepository.favorite(req.body.auth, req.body.recipelink).then(response => res.json(response));
+});
 
 module.exports = routes;
