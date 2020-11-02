@@ -3,6 +3,7 @@ const routes = express.Router();
 const userRepository = require('../Repository/UserRepository');
 require("firebase/auth");
 var firebase = require("firebase/app");
+var admin = require('firebase-admin');
 
 
 routes.post('/createUser', async (req, res, next) => {
@@ -51,9 +52,7 @@ routes.post('/deleteUser', async (req, res, next) => {
 
 routes.post('/login', async (req, res, next) => {
     var body = req.body;
-    console.log(body);
     userRepository.login(body.email).then(ret => {
-        console.log(typeof (ret))
         if (typeof (ret) == "string") {
             res.status(500).json({
                 Message: ret
@@ -80,26 +79,32 @@ routes.post('/login', async (req, res, next) => {
 
 routes.post('/updateUser', async (req, res, next) => {
     var body = req.body;
-
+    let userUid;
     userRepository.updateUser(body).then(ret => {
-        firebase.auth()
-            .signInWithEmailAndPassword(body.oldUser.email, body.newUser.password)
-            .then((userCredential) => {
-                userCredential.updateEmail(body.newUser.email).then((ret2) => {
-                    res.json({
-                        Message: ret2
+        admin.auth().getUserByEmail(req.body.oldUser.email)
+            .then(function (userRecord) {
+                userUid = userRecord.toJSON().uid;
+
+                admin.auth().updateUser(userUid, {
+                    email: req.body.newUser.email,
+                    displayName: req.body.newUser.name
+                })
+                    .then(function (userRecord) {
+
+                        res.json({
+                            Message: ret
+                        })
                     })
-                }).catch((e) => {
-                    res.status(500).json({
-                        Message: e
-                    })
-                });
-            }).catch((e) => {
+                    .catch(function (error) {
+                        console.log('Error updating user:', error);
+                    });
+            })
+            .catch(function (error) {
+                console.log('Error fetching user data:', error);
             });
-        // console.log('dang', user);
 
     }).catch(err => {
-        console.log('frombs', err)
+        console.log(err)
         res.status(500).json({
             Message: err
         });
