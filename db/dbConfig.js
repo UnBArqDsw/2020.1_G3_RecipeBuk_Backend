@@ -28,6 +28,7 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
                             time REAL,
                             portions SMALLINT,
                             visibility BOOLEAN NOT NULL,
+                            steps VARCHAR(1000) NOT NULL,
 	                        
 	                        CONSTRAINT RECIPE_PK PRIMARY KEY (recipeId),
 	                        CONSTRAINT RECIPE_USER_ACCOUNT_FK FOREIGN KEY (userEmail)
@@ -56,16 +57,6 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
 		                        REFERENCES USER_ACCOUNT (email)
                         );
 
-                        CREATE TABLE STEP (
-                            recipeId SERIAL NOT NULL,
-                            number INTEGER NOT NULL,
-                            instruction TEXT NOT NULL,
-	                        
-                            CONSTRAINT STEP_UK UNIQUE (recipeId, number),
-	                        CONSTRAINT STEP_RECIPE_FK FOREIGN KEY (recipeId)
-		                        REFERENCES RECIPE (recipeId)
-                        );
-
                         CREATE TABLE CATEGORY (
                             idCategory SMALLSERIAL NOT NULL,
                             name VARCHAR(30) NOT NULL,
@@ -78,6 +69,15 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
                             name VARCHAR(30) NOT NULL,
 	                        
 	                        CONSTRAINT INGREDIENT_PK PRIMARY KEY (ingredientId)
+                        );
+
+                        CREATE TABLE FAVORITE (
+                            userEmail VARCHAR(80) NOT NULL,
+                            recipeLink VARCHAR(100) NOT NULL,
+
+                            CONSTRAINT FAVORITE_UK UNIQUE (userEmail, recipeLink),
+                            CONSTRAINT FAVORITE_USER_ACCOUNT_FK FOREIGN KEY (userEmail)
+                                REFERENCES USER_ACCOUNT (email)
                         );
 
                         CREATE TABLE contains (

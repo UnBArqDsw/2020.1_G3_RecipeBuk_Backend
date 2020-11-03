@@ -31,5 +31,16 @@ async function deleteUser(email) {
     return result;
 }
 
+function getUser(sessionId) {
+    return new Promise((resolve, reject) => {
+        db.query(`SELECT userEmail FROM USER_SESSION WHERE sessionId = '${sessionId}'`, (err, res) => {
+            if(err)
+                resolve({user: null});
 
-module.exports = { addUser, deleteUser};
+            else
+                resolve({user: res.rows[0].useremail ? res.rows[0].useremail : null});
+        });
+    });
+}
+
+module.exports = { addUser, deleteUser, getUser};

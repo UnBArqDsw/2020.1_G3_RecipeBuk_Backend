@@ -1,22 +1,30 @@
-
 const db = require('../../db/dbConfig');
 
-async function addRecipe(recipeName, time, yield) {
-    const query = {
-        text: "INSERT INTO RECIPE(name, time, portions) VALUES($1, $2, $3)", 
-        values: [recipeName, time, yield],
-    }
-    
-    db.query(query, (err, res) => {
-        if (err) {
-            console.log("Erro: ", err);
-            return err;
-            
-        } else {
-            console.log("Receita adicionada!", res);
-            return "Receita adicionada!"
+function addRecipe(userEmail, recipeName, time, portions, visibility) {
+    return new Promise((resolve, reject) => {
+        db.query(`INSERT INTO RECIPE(useremail, name, time, portions, visibility) VALUES('${userEmail}', '${recipeName}', ${time}, ${portions}, ${visibility}) RETURNING recipeid`, (err, res) => {
+            if(err)
+                resolve({error: true});
+
+            else
+                resolve(res.rows[0]);
+        });
+    });
+}
+
+async function addIngredients(ingredients, recipeid) {
+    return new Promise(async function (resolve, reject) {
+        for(let ingredient of ingredients) {
+            try {
+                let res = await db.query(`INSERT INTO INGREDIENT(name) VALUES('${ingredient.name}') RETURNING ingredientid`);
+                res = await db.query(`INSERT INTO uses VALUES(${res.rows[0].ingredientid}, ${recipeid}, '${ingredient.unit}', ${ingredient.quantity})`);
+            } catch(err) {
+                resolve({error: true});
+            }
         }
-    })
+
+        resolve({error: false, recipeid: recipeid});
+    });
 }
 
 async function addStep(preparationMode) {
@@ -55,24 +63,6 @@ async function addCategory(category) {
     })
 }
 
-async function addIngredient(ingredient) {
-    const query = {
-        text: "INSERT INTO INGREDIENT(name) VALUES($2)", 
-        values: [ingredient],
-    }
-    
-    db.query(query, (err, res) => {
-        if (err) {
-            console.log("Erro: ", err);
-            return err;
-            
-        } else {
-            console.log("Ingrediente adicionado!", res);
-            return "Ingrediente adicionado!"
-        }
-    })
-}
-
 async function addUses(unity, quantity) {
     const query = {
         text: "INSERT INTO uses(unit, quantity) VALUES($3, $4)", 
@@ -91,4 +81,4 @@ async function addUses(unity, quantity) {
     })
 }
 
-
+module.exports = { addRecipe, addIngredients };
