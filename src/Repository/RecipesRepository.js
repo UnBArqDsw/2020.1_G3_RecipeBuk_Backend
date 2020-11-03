@@ -1,8 +1,8 @@
 const db = require('../../db/dbConfig');
 
-function addRecipe(userEmail, recipeName, time, portions, visibility) {
+function addRecipe(userEmail, recipeName, time, portions, visibility, steps) {
     return new Promise((resolve, reject) => {
-        db.query(`INSERT INTO RECIPE(useremail, name, time, portions, visibility) VALUES('${userEmail}', '${recipeName}', ${time}, ${portions}, ${visibility}) RETURNING recipeid`, (err, res) => {
+        db.query(`INSERT INTO RECIPE(useremail, name, time, portions, visibility, steps) VALUES('${userEmail}', '${recipeName}', ${time}, ${portions}, ${visibility}, '${steps}') RETURNING recipeid`, (err, res) => {
             if(err)
                 resolve({error: true});
 
@@ -12,12 +12,12 @@ function addRecipe(userEmail, recipeName, time, portions, visibility) {
     });
 }
 
-async function addIngredients(ingredients, recipeid) {
+function addIngredients(ingredients, recipeid) {
     return new Promise(async function (resolve, reject) {
         for(let ingredient of ingredients) {
             try {
-                let res = await db.query(`INSERT INTO INGREDIENT(name) VALUES('${ingredient.name}') RETURNING ingredientid`);
-                res = await db.query(`INSERT INTO uses VALUES(${res.rows[0].ingredientid}, ${recipeid}, '${ingredient.unit}', ${ingredient.quantity})`);
+                const res = await db.query(`INSERT INTO INGREDIENT(name) VALUES('${ingredient.name}') RETURNING ingredientid`);
+                await db.query(`INSERT INTO uses VALUES(${res.rows[0].ingredientid}, ${recipeid}, '${ingredient.unit}', ${ingredient.quantity})`);
             } catch(err) {
                 resolve({error: true});
             }
@@ -27,58 +27,23 @@ async function addIngredients(ingredients, recipeid) {
     });
 }
 
-async function addStep(preparationMode) {
-    const query = {
-        text: "INSERT INTO STEP(instruction) VALUES($3)", 
-        values: [preparationMode],
-    }
-    
-    db.query(query, (err, res) => {
-        if (err) {
-            console.log("Erro: ", err);
-            return err;
-            
-        } else {
-            console.log("Passo adicionado!", res);
-            return "Passo adicionado!"
+function addCategories(categories, recipeid) {
+    return new Promise(async function (resolve, reject) {
+        categories.forEach((category) => {
+            if(typeof category != 'number')
+                resolve({error: true});
+        });
+
+        for(let category of categories) {
+            try {
+                await db.query(`INSERT INTO categorizes VALUES(${category}, ${recipeid})`);
+            } catch(err) {
+                resolve({error: true});
+            }
         }
-    })
+
+        resolve({error: false});
+    });
 }
 
-async function addCategory(category) {
-    const query = {
-        text: "INSERT INTO CATEGORY(name) VALUES($2)", 
-        values: [category],
-    }
-    
-    db.query(query, (err, res) => {
-        if (err) {
-            console.log("Erro: ", err);
-            return err;
-            
-        } else {
-            console.log("Categoria adicionada!", res);
-            return "Categoria adicionada!"
-        }
-    })
-}
-
-async function addUses(unity, quantity) {
-    const query = {
-        text: "INSERT INTO uses(unit, quantity) VALUES($3, $4)", 
-        values: [unity, quantity],
-    }
-    
-    db.query(query, (err, res) => {
-        if (err) {
-            console.log("Erro: ", err);
-            return err;
-            
-        } else {
-            console.log("Utilitários adicionados!", res);
-            return "Utilitários adicionados!"
-        }
-    })
-}
-
-module.exports = { addRecipe, addIngredients };
+module.exports = { addRecipe, addIngredients, addCategories };
