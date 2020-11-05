@@ -52,14 +52,22 @@ routes.post('/deleteUser', async (req, res, next) => {
 });
 
 routes.post('/login', async (req, res, next) => {
-    var body = req.body;
+    const body = req.body;
+    firebase.auth().signInWithEmailAndPassword(body.email, body.password).then(() => {
+        userRepository.login(body.email).then((response) => {
+            res.json(response);
+        });
+    }).catch((error) => {
+        res.json({error: error.code});
+    });
+/*
     userRepository.login(body.email).then(ret => {
         if (typeof (ret) == "string") {
             res.status(500).json({
                 Message: ret
             })
         } else {
-            firebase.auth().signInWithEmailAndPassword(body.email, body.password).then(() => {
+            firebase.auth().signInWithEmailAndPassword(body.email, body.password).then((firebaseres) => {
                 res.json({
                     Message: ret
                 })
@@ -74,7 +82,7 @@ routes.post('/login', async (req, res, next) => {
         res.status(500).json({
             Message: err
         })
-    })
+    })*/
 
 });
 
