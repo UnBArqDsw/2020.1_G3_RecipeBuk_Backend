@@ -60,30 +60,10 @@ routes.post('/login', async (req, res, next) => {
     }).catch((error) => {
         res.json({error: error.code});
     });
-/*
-    userRepository.login(body.email).then(ret => {
-        if (typeof (ret) == "string") {
-            res.status(500).json({
-                Message: ret
-            })
-        } else {
-            firebase.auth().signInWithEmailAndPassword(body.email, body.password).then((firebaseres) => {
-                res.json({
-                    Message: ret
-                })
-            }).catch(err => {
-                res.status(500).json({
-                    Message: err
-                })
-            });
-        }
+});
 
-    }).catch(err => {
-        res.status(500).json({
-            Message: err
-        })
-    })*/
-
+routes.post('/logout', async (req, res, next) => {
+    userRepository.logout(req.body.auth).then(response => res.json(response));
 });
 
 routes.post('/updateUser', async (req, res, next) => {
