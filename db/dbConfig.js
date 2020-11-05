@@ -80,15 +80,6 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
 	                        CONSTRAINT INGREDIENT_PK PRIMARY KEY (ingredientId)
                         );
 
-                        CREATE TABLE FAVORITE (
-                            userEmail VARCHAR(80) NOT NULL,
-                            recipeLink VARCHAR(100) NOT NULL,
-
-                            CONSTRAINT FAVORITE_UK UNIQUE (userEmail, recipeLink),
-                            CONSTRAINT FAVORITE_USER_ACCOUNT_FK FOREIGN KEY (userEmail)
-                                REFERENCES USER_ACCOUNT (email)
-                        );
-
                         CREATE TABLE contains (
                             recipeId SERIAL NOT NULL,
                             bookId SERIAL NOT NULL,

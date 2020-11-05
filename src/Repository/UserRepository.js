@@ -35,11 +35,11 @@ async function deleteUser(email) {
 function getUser(sessionId) {
     return new Promise((resolve, reject) => {
         db.query(`SELECT userEmail FROM USER_SESSION WHERE sessionId = '${sessionId}'`, (err, res) => {
-            if(err)
+            if(err || !res.rowCount)
                 resolve({user: null});
 
             else
-                resolve({user: res.rows[0].useremail ? res.rows[0].useremail : null});
+                resolve({user: res.rows[0].useremail});
         });
     });
 }
