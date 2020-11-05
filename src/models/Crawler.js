@@ -1,7 +1,9 @@
+const Searcher = require('./Searcher.js');
 const crawler = require('crawler');
 
-module.exports = class Crawler {
+module.exports = class Crawler extends Searcher {
 	constructor(search_term, search_page = 1) {
+		super();
 		this.search_term = search_term;
         this.search_results = [];
         this.search_crawler = new crawler({
