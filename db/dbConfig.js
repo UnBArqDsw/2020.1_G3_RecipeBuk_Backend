@@ -51,19 +51,18 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
                             userEmail VARCHAR(80) NOT NULL,
                             expirationDate DATE NOT NULL,
 	                        
-	                        CONSTRAINT USER_SESSION_PK PRIMARY KEY (sessionId),
+	                        CONSTRAINT USER_SESSION_UK UNIQUE (sessionId),
 	                        CONSTRAINT USER_SESSION_USER_ACCOUNT_FK FOREIGN KEY (userEmail)
 		                        REFERENCES USER_ACCOUNT (email)
                         );
 
-                        CREATE TABLE STEP (
-                            recipeId SERIAL NOT NULL,
-                            number INTEGER NOT NULL,
-                            instruction TEXT NOT NULL,
+                        CREATE TABLE FAVORITE (
+                            userEmail VARCHAR(80) NOT NULL,
+                            recipeLink VARCHAR(100) NOT NULL,
 	                        
-                            CONSTRAINT STEP_UK UNIQUE (recipeId, number),
-	                        CONSTRAINT STEP_RECIPE_FK FOREIGN KEY (recipeId)
-		                        REFERENCES RECIPE (recipeId)
+                            CONSTRAINT STEP_UK UNIQUE (userEmail, recipeLink),
+	                        CONSTRAINT STEP_USER_ACCOUNT_FK FOREIGN KEY (userEmail)
+		                        REFERENCES USER_ACCOUNT (email)
                         );
 
                         CREATE TABLE CATEGORY (

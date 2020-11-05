@@ -1,5 +1,6 @@
 const db = require('../../db/dbConfig');
-const User = require('../models/User')
+const User = require('../models/User');
+const uuid = require('uuid');
 
 async function addUser(name, email) {
     const query = {
@@ -31,26 +32,52 @@ async function deleteUser(email) {
     return result;
 }
 
-async function login(email) {
+function login(email) {
+    return new Promise((resolve, reject) => {
+        let query = {
+            text: "SELECT * FROM USER_SESSION WHERE userEmail = $1 ORDER BY expirationDate ASC",
+            values: [email]
+        };
 
-    const query = {
-        text: "SELECT * FROM USER_ACCOUNT WHERE email = $1",
-        values: [email],
-    }
-    try {
-        result = await db.query(query);
-    } catch (err) {
-        console.error(err)
-        return err;
-    }
-    if (result.rowCount > 0) {
-        let user = new User(result.rows[0].email, result.rows[0].name);
-        return user;
-    } else {
-        return "Usuário não encontrado"
-    }
+        db.query(query, async (error, res) => {
+            let rows = res.rows;
+            while(rows.length > 4) {
+                let row = rows.shift();
+                await db.query('DELETE FROM USER_SESSION WHERE sessionId = $1', [row.sessionid]);
+            }
 
+            const uuidv4 = uuid.v4().replace(/-/g, '');
+            let date = new Date();
+            date.setDate(date.getDate() + 7);
+            query = {
+                text: "INSERT INTO USER_SESSION VALUES($1, $2, $3)",
+                values: [uuidv4, email, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`]
+            }
 
+            db.query(query, (error, res) => {
+                if(error)
+                    resolve({error: true});
+
+                else
+                    resolve({user_session: uuidv4});
+            }); 
+        });
+    });
+}
+
+function logout(userSession) {
+    return new Promise((resolve, reject) => {
+        const query = {
+            text: 'DELETE FROM USER_SESSION WHERE sessionId = $1',
+            values: [userSession]
+        };
+
+        db.query(query, (err, res) => {
+            if(err)
+                resolve({error: true});
+            resolve({error: false});
+        });
+    });
 }
 
 async function updateUser(users) {
@@ -147,4 +174,4 @@ function favorite(auth, recipelink) {
     });
 }
 
-module.exports = { addUser, deleteUser, login, updateUser, getFavorites, favorite };
+module.exports = { addUser, deleteUser, login, updateUser, getFavorites, favorite, logout };
