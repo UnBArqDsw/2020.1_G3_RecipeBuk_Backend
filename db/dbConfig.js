@@ -28,6 +28,7 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
                             time REAL,
                             portions SMALLINT,
                             visibility BOOLEAN NOT NULL,
+                            steps VARCHAR(1000) NOT NULL,
 	                        
 	                        CONSTRAINT RECIPE_PK PRIMARY KEY (recipeId),
 	                        CONSTRAINT RECIPE_USER_ACCOUNT_FK FOREIGN KEY (userEmail)

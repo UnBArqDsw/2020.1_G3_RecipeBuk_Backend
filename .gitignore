@@ -48,4 +48,6 @@ testem.log
 .DS_Store
 Thumbs.db
 /.vs/slnx.sqlite
+
 config/recipebuk-fga-firebase-adminsdk.json
+

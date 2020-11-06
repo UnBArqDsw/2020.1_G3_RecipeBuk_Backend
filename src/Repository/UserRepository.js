@@ -32,6 +32,18 @@ async function deleteUser(email) {
     return result;
 }
 
+function getUser(sessionId) {
+    return new Promise((resolve, reject) => {
+        db.query(`SELECT userEmail FROM USER_SESSION WHERE sessionId = '${sessionId}'`, (err, res) => {
+            if(err || !res.rowCount)
+                resolve({user: null});
+
+            else
+                resolve({user: res.rows[0].useremail});
+        });
+    });
+}
+
 function login(email) {
     return new Promise((resolve, reject) => {
         let query = {
@@ -174,4 +186,4 @@ function favorite(auth, recipelink) {
     });
 }
 
-module.exports = { addUser, deleteUser, login, updateUser, getFavorites, favorite, logout };
+module.exports = { addUser, deleteUser, getUser, login, updateUser, getFavorites, favorite, logout };
