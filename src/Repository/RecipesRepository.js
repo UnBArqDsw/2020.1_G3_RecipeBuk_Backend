@@ -9,7 +9,7 @@ function addRecipe(userEmail, recipeName, time, portions, visibility, steps) {
 
         db.query(query, (err, res) => {
             if(err)
-                resolve({error: true});
+                resolve({error: true, details: 'An error occurred while adding the recipe information.'});
 
             else
                 resolve(res.rows[0]);
@@ -24,7 +24,7 @@ function addIngredients(ingredients, recipeid) {
                 const res = await db.query(`INSERT INTO INGREDIENT(name) VALUES($1) RETURNING ingredientid`, [ingredient.name]);
                 await db.query('INSERT INTO uses VALUES($1, $2, $3, $4)', [res.rows[0].ingredientid, recipeid, ingredient.unit, ingredient.quantity]);
             } catch(err) {
-                resolve({error: true});
+                resolve({error: true, details: 'An error occurred while adding one of the ingredients.'});
             }
         }
 
@@ -36,14 +36,14 @@ function addCategories(categories, recipeid) {
     return new Promise(async function (resolve, reject) {
         categories.forEach((category) => {
             if(typeof category != 'number')
-                resolve({error: true});
+                resolve({error: true, details: `An error occurred while adding one of the categories which has an invalid type. Expected Number got ${typeof category}.`});
         });
 
         for(let category of categories) {
             try {
                 await db.query('INSERT INTO categorizes VALUES($1, $2)', [category, recipeid]);
             } catch(err) {
-                resolve({error: true});
+                resolve({error: true, details: 'An error occurred while adding one of the categories.'});
             }
         }
 

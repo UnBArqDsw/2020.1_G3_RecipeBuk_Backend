@@ -72,7 +72,7 @@ function login(email) {
 
             db.query(query, (error, res) => {
                 if(error)
-                    resolve({error: true});
+                    resolve({error: true, details: 'An error occurred while creating the user session.'});
 
                 else
                     resolve({user_session: uuidv4});
@@ -90,7 +90,7 @@ function logout(userSession) {
 
         db.query(query, (err, res) => {
             if(err)
-                resolve({error: true});
+                resolve({error: true, details: 'An error occurred while disabling the user session.'});
             resolve({error: false});
         });
     });
@@ -123,8 +123,6 @@ async function updateUser(users) {
     } else {
         return "Usuário não encontrado"
     }
-
-
 }
 
 function getFavorites(auth) {
@@ -166,20 +164,16 @@ function favorite(auth, recipelink) {
                         if(error) {
                             if(error.code == 23505) {
                                 db.query('DELETE FROM FAVORITE WHERE recipelink = $1', [recipelink], (error, response) => {
-                                    if(error) {
-                                        console.log(error);
-                                        resolve({error: true});
-                                    }
+                                    if(error)
+                                        resolve({error: true, details: 'An error occurred while deleting the favorite.'});
 
                                     else
                                         resolve({error: false});
                                 })
                             }
 
-                            else {
-                                console.log(error);
-                                resolve({error: true});
-                            }
+                            else
+                                resolve({error: true, details: 'An error occurred while adding the favorite.'});
                         }
 
                         else
@@ -188,7 +182,7 @@ function favorite(auth, recipelink) {
                 }
 
                 else
-                    resolve({error: true});
+                    resolve({error: true, details: 'An error occurred while fetching the user.'});
             }
         });
     });
