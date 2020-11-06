@@ -28,7 +28,7 @@ function addUser(name, email, password) {
     });
 }
 
-async function deleteUser(email, password) {
+function deleteUser(email, password) {
     return new Promise((resolve, reject) => {
         let query = {
             text: 'SELECT * FROM USER_ACCOUNT WHERE email = $1',
@@ -52,10 +52,8 @@ async function deleteUser(email, password) {
                             };
 
                             db.query(query, (err, result) => {
-                                if(err) {
-                                    console.log(err)
+                                if(err)
                                     resolve({error: true, details: 'An error occurred while deleting your account.'});
-                                }
 
                                 else
                                     resolve({error: false});
@@ -159,33 +157,42 @@ function logout(userSession) {
     });
 }
 
-async function updateUser(users) {
-    let result;
-    const query = {
-        text: "UPDATE USER_ACCOUNT SET name = $1, email = $2 WHERE email = $3",
-        values: [users.newUser.name, users.newUser.email, users.oldUser.email],
-    }
-    try {
-        result = await db.query(query);
-        const query2 = {
-            text: "SELECT * FROM USER_ACCOUNT WHERE email = $1",
-            values: [users.newUser.email],
-        }
-        try {
-            const result2 = await db.query(query2);
-        } catch (err) {
-            console.error(err)
-        }
-    } catch (err) {
-        console.error(err)
-        return err;
-    }
-    if (result.rowCount > 0) {
-        let user = new User(users.newUser.email, users.newUser.name);
-        return user;
-    } else {
-        return "Usuário não encontrado"
-    }
+function updateUser(info, auth) {
+    return new Promise((resolve, reject) => {
+        getUser(auth).then((result) => {
+            if(result.error)
+                resolve({error: true, details: 'An error occurred while fetching your user. Invalid user session.'});
+
+            else {
+                let query = {
+                    text: 'SELECT * FROM USER_ACCOUNT WHERE email = $1',
+                    values: [result.user]
+                };
+
+                db.query(query, (error, res) => {
+                    if(error || !res.rowCount) {
+                        console.log(res)
+                        resolve({error: true, details: "An error occurred while validating your credentials. Invalid user or user doesn't exist."});
+                    }
+
+                    else {
+                        query = {
+                            text: "UPDATE USER_ACCOUNT SET name = $1, email = $2 WHERE email = $3",
+                            values: [info.name ? info.name : res.rows[0].name, info.email ? info.email : res.rows[0].email, result.user],
+                        };
+
+                        db.query(query, (err, result) => {
+                            if(err)
+                                resolve({error: true, details: 'An error occurred while updating your account details.'});
+
+                            else
+                                resolve({error: false});
+                        });
+                    }
+                });  
+            }
+        });
+    });
 }
 
 function getFavorites(auth) {

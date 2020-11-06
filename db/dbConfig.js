@@ -45,7 +45,7 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
 	                        
 	                        CONSTRAINT RECIPE_BOOK_PK PRIMARY KEY (bookId),
 	                        CONSTRAINT RECIPE_BOOK_USER_ACCOUNT_FK FOREIGN KEY (userEmail)
-		                        REFERENCES USER_ACCOUNT (email)  ON DELETE CASCADE
+		                        REFERENCES USER_ACCOUNT (email)  ON DELETE CASCADE ON UPDATE CASCADE
                         );
 
                         CREATE TABLE USER_SESSION (
@@ -55,7 +55,7 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
 	                        
 	                        CONSTRAINT USER_SESSION_UK UNIQUE (sessionId),
 	                        CONSTRAINT USER_SESSION_USER_ACCOUNT_FK FOREIGN KEY (userEmail)
-		                        REFERENCES USER_ACCOUNT (email)  ON DELETE CASCADE
+		                        REFERENCES USER_ACCOUNT (email)  ON DELETE CASCADE ON UPDATE CASCADE
                         );
 
                         CREATE TABLE FAVORITE (
@@ -64,7 +64,7 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
 	                        
                             CONSTRAINT STEP_UK UNIQUE (userEmail, recipeLink),
 	                        CONSTRAINT STEP_USER_ACCOUNT_FK FOREIGN KEY (userEmail)
-		                        REFERENCES USER_ACCOUNT (email)  ON DELETE CASCADE
+		                        REFERENCES USER_ACCOUNT (email)  ON DELETE CASCADE ON UPDATE CASCADE
                         );
 
                         CREATE TABLE CATEGORY (
