@@ -34,7 +34,11 @@ async function deleteUser(email) {
 
 function getUser(sessionId) {
     return new Promise((resolve, reject) => {
-        db.query(`SELECT userEmail FROM USER_SESSION WHERE sessionId = '${sessionId}'`, (err, res) => {
+        const query = {
+            text: 'SELECT userEmail FROM USER_SESSION WHERE sessionId = $1',
+            values: [sessionId]
+        };
+        db.query(query, (err, res) => {
             if(err || !res.rowCount)
                 resolve({user: null});
 
@@ -125,12 +129,16 @@ async function updateUser(users) {
 
 function getFavorites(auth) {
     return new Promise((resolve, reject) => {
-        let favorites = [];
-
-        db.query(`SELECT FAVORITE.recipeLink
+        const query = {
+            text: `SELECT FAVORITE.recipeLink
                     FROM USER_SESSION INNER JOIN USER_ACCOUNT ON USER_ACCOUNT.email = USER_SESSION.userEmail
                     INNER JOIN FAVORITE ON FAVORITE.userEmail = USER_ACCOUNT.email
-                    WHERE USER_SESSION.sessionId = '${auth}'`, (error, response) => {
+                    WHERE USER_SESSION.sessionId = $1`,
+            values: [auth]
+        };
+        let favorites = [];
+
+        db.query(query, (error, response) => {
             if(error) {
                 console.log(error);
                 resolve([]);
@@ -146,7 +154,7 @@ function getFavorites(auth) {
 
 function favorite(auth, recipelink) {
     return new Promise((resolve, reject) => {
-        db.query(`SELECT userEmail FROM USER_SESSION WHERE sessionId = '${auth}'`, (error, response) => {
+        db.query('SELECT userEmail FROM USER_SESSION WHERE sessionId = $1', [auth], (error, response) => {
             if(error) {
                 console.log(error);
                 resolve({error: true});
@@ -154,10 +162,10 @@ function favorite(auth, recipelink) {
 
             else {
                 if(response.rows.length) {
-                    db.query(`INSERT INTO FAVORITE VALUES ('${response.rows[0].useremail}', '${recipelink}')`, (error, response) => {
+                    db.query('INSERT INTO FAVORITE VALUES ($1, $2)', [response.rows[0].useremail, recipelink], (error, response) => {
                         if(error) {
                             if(error.code == 23505) {
-                                db.query(`DELETE FROM FAVORITE WHERE recipelink = '${recipelink}'`, (error, response) => {
+                                db.query('DELETE FROM FAVORITE WHERE recipelink = $1', [recipelink], (error, response) => {
                                     if(error) {
                                         console.log(error);
                                         resolve({error: true});
