@@ -28,19 +28,47 @@ function addUser(name, email, password) {
     });
 }
 
-async function deleteUser(email) {
-    const query = {
-        text: "DELETE FROM USER_ACCOUNT WHERE email = $1",
-        values: [email],
-    }
-    var result;
-    try {
-        result = await db.query(query)
-    } catch (err) {
-        console.error(err)
-        result = err;
-    }
-    return result;
+async function deleteUser(email, password) {
+    return new Promise((resolve, reject) => {
+        let query = {
+            text: 'SELECT * FROM USER_ACCOUNT WHERE email = $1',
+            values: [email]
+        };
+
+        db.query(query, (error, res) => {
+            if(error || !res.rowCount)
+                resolve({error: true, details: "An error occurred while validating your credentials. Invalid user or user doesn't exist."});
+
+            else {
+                bcrypt.compare(password, res.rows[0].password, (err, result) => {
+                    if(err)
+                        resolve({error: true, details: 'An error occurred while validating your credentials. Invalid or wrong password.'});
+
+                    else {
+                        if(result) {
+                            query = {
+                                text: "DELETE FROM USER_ACCOUNT WHERE email = $1",
+                                values: [email],
+                            };
+
+                            db.query(query, (err, result) => {
+                                if(err) {
+                                    console.log(err)
+                                    resolve({error: true, details: 'An error occurred while deleting your account.'});
+                                }
+
+                                else
+                                    resolve({error: false});
+                            });
+                        }
+
+                        else
+                            resolve({error: true, details: 'An error occurred while validating your credentials. Wrong password.'});
+                    }
+                });
+            }
+        });
+    });
 }
 
 function getUser(sessionId) {

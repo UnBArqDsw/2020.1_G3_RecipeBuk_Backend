@@ -15,19 +15,8 @@ routes.post('/createUser', async (req, res, next) => {
 
 routes.post('/deleteUser', async (req, res, next) => {
     var body = req.body;
-
-    userRepository.deleteUser(body.email).then(ret => {
-        if (ret.name == "error") {
-            res.status(500).json({
-                Message: ret.detail
-            })
-        } else {
-            res.status(200).json({
-                Message: "Usuário removido"
-            })
-        }
-    })
-
+    
+    userRepository.deleteUser(body.email, body.password).then(response => res.json(response));
 });
 
 routes.post('/login', async (req, res, next) => {
