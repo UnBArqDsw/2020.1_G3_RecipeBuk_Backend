@@ -1,20 +1,31 @@
 const db = require('../../db/dbConfig');
 const User = require('../models/User');
 const uuid = require('uuid');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
-async function addUser(name, email) {
-    const query = {
-        text: "INSERT INTO USER_ACCOUNT(name, email) VALUES($1, $2)",
-        values: [name, email],
-    }
-    var result;
-    try {
-        result = await db.query(query)
-    } catch (err) {
-        console.error(err);
-        result = err;
-    }
-    return result
+function addUser(name, email, password) {
+    return new Promise((resolve, reject) => {
+        bcrypt.hash(password, saltRounds, (error, hash) => {
+            if(error)
+                resolve({error: true, details: 'An error occurred while storing your password.'});
+
+            else {
+                const query = {
+                    text: 'INSERT INTO USER_ACCOUNT VALUES($1, $2, $3)',
+                    values: [email, name, hash]
+                };
+
+                db.query(query, (err, res) => {
+                    if(err)
+                        resolve({error: true, details: 'Error while registering user.'});
+
+                    else
+                        resolve({error: false});
+                });
+            }
+        });
+    });
 }
 
 async function deleteUser(email) {
@@ -48,35 +59,59 @@ function getUser(sessionId) {
     });
 }
 
-function login(email) {
+function login(email, password) {
     return new Promise((resolve, reject) => {
         let query = {
-            text: "SELECT * FROM USER_SESSION WHERE userEmail = $1 ORDER BY expirationDate ASC",
+            text: 'SELECT * FROM USER_ACCOUNT WHERE email = $1',
             values: [email]
         };
 
-        db.query(query, async (error, res) => {
-            let rows = res.rows;
-            while(rows.length > 4) {
-                let row = rows.shift();
-                await db.query('DELETE FROM USER_SESSION WHERE sessionId = $1', [row.sessionid]);
+        db.query(query, (error, res) => {
+            if(error || !res.rowCount)
+                resolve({error: true, details: "An error occurred while logging in. Invalid user or user doesn't exist."});
+
+            else {
+                bcrypt.compare(password, res.rows[0].password, (err, result) => {
+                    if(err)
+                        resolve({error: true, details: 'An error occurred while validating your login. Invalid or wrong password.'});
+
+                    else {
+                        if(result) {
+                            query = {
+                                text: "SELECT * FROM USER_SESSION WHERE userEmail = $1 ORDER BY expirationDate ASC",
+                                values: [email]
+                            };
+
+                            db.query(query, async (error, res) => {
+                                let rows = res.rows;
+                                while(rows.length > 4) {
+                                    let row = rows.shift();
+                                    await db.query('DELETE FROM USER_SESSION WHERE sessionId = $1', [row.sessionid]);
+                                }
+
+                                const uuidv4 = uuid.v4().replace(/-/g, '');
+                                let date = new Date();
+                                date.setDate(date.getDate() + 7);
+                                query = {
+                                    text: "INSERT INTO USER_SESSION VALUES($1, $2, $3)",
+                                    values: [uuidv4, email, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`]
+                                }
+
+                                db.query(query, (error, res) => {
+                                    if(error)
+                                        resolve({error: true, details: 'An error occurred while creating the user session.'});
+
+                                    else
+                                        resolve({user_session: uuidv4});
+                                }); 
+                            });
+                        }
+
+                        else
+                            resolve({error: true, details: 'An error occurred while validating your login. Wrong password.'});
+                    }
+                });
             }
-
-            const uuidv4 = uuid.v4().replace(/-/g, '');
-            let date = new Date();
-            date.setDate(date.getDate() + 7);
-            query = {
-                text: "INSERT INTO USER_SESSION VALUES($1, $2, $3)",
-                values: [uuidv4, email, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`]
-            }
-
-            db.query(query, (error, res) => {
-                if(error)
-                    resolve({error: true, details: 'An error occurred while creating the user session.'});
-
-                else
-                    resolve({user_session: uuidv4});
-            }); 
         });
     });
 }

@@ -3,7 +3,7 @@ const { Pool, Client } = require('pg');
 const connectionString = process.env.DB_URL;
 
 const pool = new Pool({
-    connectionString: connectionString,
+  connectionString: connectionString,
 });
 
 pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema'", (err, res) => {
@@ -17,6 +17,7 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
             pool.query(`CREATE TABLE USER_ACCOUNT (
                             email VARCHAR(80) NOT NULL,
                             name VARCHAR(50) NOT NULL,
+                            password CHAR(60) NOT NULL,
                             
 	                        CONSTRAINT USER_ACCOUNT_PK PRIMARY KEY (email)
                         );

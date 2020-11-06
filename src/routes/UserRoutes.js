@@ -5,33 +5,12 @@ const db = require('../../db/dbConfig');
 require("firebase/auth");
 var firebase = require("firebase/app");
 var admin = require('firebase-admin');
-
+const bcrypt = require('bcrypt');
 
 routes.post('/createUser', async (req, res, next) => {
     var body = req.body;
-    userRepository.addUser(body.name, body.email).then(ret => {
-        if (ret.name == "error") {
-            res.status(500).json({
-                Message: ret.detail
-            })
-        } else {
-            firebase.auth().createUserWithEmailAndPassword(body.email, body.password).then(() => {
-
-                res.status(200).json({
-                    Message: "Usuário registrado!"
-                })
-            }).catch(e => {
-                userRepository.deleteUser(body.email);
-                res.status(500).json({
-                    Message: e
-                })
-            })
-        }
-    }).catch(e => {
-        res.status(500).json({
-            Message: e
-        })
-    })
+    //Check for bad passwords
+    userRepository.addUser(body.name, body.email, body.password).then(response => res.json(response));
 });
 
 routes.post('/deleteUser', async (req, res, next) => {
@@ -53,12 +32,8 @@ routes.post('/deleteUser', async (req, res, next) => {
 
 routes.post('/login', async (req, res, next) => {
     const body = req.body;
-    firebase.auth().signInWithEmailAndPassword(body.email, body.password).then(() => {
-        userRepository.login(body.email).then((response) => {
-            res.json(response);
-        });
-    }).catch((error) => {
-        res.json({error: error.code});
+    userRepository.login(body.email, body.password).then((response) => {
+        res.json(response);
     });
 });
 
