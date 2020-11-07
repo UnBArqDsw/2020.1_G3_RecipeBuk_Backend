@@ -34,12 +34,28 @@ async function deleteUser(email) {
 
 function getUser(sessionId) {
     return new Promise((resolve, reject) => {
-        db.query(`SELECT userEmail FROM USER_SESSION WHERE sessionId = '${sessionId}'`, (err, res) => {
+        let query = {
+            text: 'SELECT userEmail FROM USER_SESSION WHERE sessionId = $1',
+            values: [sessionId]
+        };
+        db.query(query, (err, res) => {
             if(err || !res.rowCount)
                 resolve({user: null});
 
-            else
-                resolve({user: res.rows[0].useremail});
+            else {
+                query = {
+                    text: 'SELECT * FROM USER_ACCOUNT WHERE email = $1',
+                    values: [res.rows[0].useremail]
+                };
+
+                db.query(query, (err, res) => {
+                    if(err || !res.rowCount)
+                        resolve({user: null});
+
+                    else
+                        resolve({user: res.rows[0]});
+                });
+            }
         });
     });
 }

@@ -17,7 +17,8 @@ routes.post('/addRecipe', async (req, res, next) => {
     if(ingredients.length) {
         userRepository.getUser(req.body.auth).then((response) => {
             if(response.user) {
-                recipesRepository.addRecipe(response.user, req.body.name, req.body.time, req.body.portions, req.body.visibility, req.body.steps).then((response) => {
+                console.log(response)
+                recipesRepository.addRecipe(response.user.email, req.body.name, req.body.time, req.body.portions, req.body.visibility, req.body.steps).then((response) => {
                     if(response.error)
                         return res.json(response);
 
@@ -46,17 +47,13 @@ routes.post('/addRecipe', async (req, res, next) => {
 routes.post('/deleteRecipe', async (req, res, next) => {
     var body = req.body;
     
-    recipeRepository.deleteRecipe(body.recipeName).then(ret => {
-        if(ret.name == "error"){
-            res.status(500).json({
-                Message: ret.detail
-            })
-        } else {
-            res.status(200).json({
-                Message: "Receita removida!"
-            })
-        }        
-    })
+    userRepository.getUser(body.auth).then((response) => {
+        if(response.user)
+            recipesRepository.deleteRecipe(body.recipeid, response.user).then(response => res.json(response));
+
+        else
+            res.json({error: true, details: 'An error occurred while fetching the user. User not found.'});
+    });
 });
 
 module.exports = routes;

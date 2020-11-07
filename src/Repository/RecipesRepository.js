@@ -3,8 +3,10 @@ const db = require('../../db/dbConfig');
 function addRecipe(userEmail, recipeName, time, portions, visibility, steps) {
     return new Promise((resolve, reject) => {
         db.query(`INSERT INTO RECIPE(useremail, name, time, portions, visibility, steps) VALUES('${userEmail}', '${recipeName}', ${time}, ${portions}, ${visibility}, '${steps}') RETURNING recipeid`, (err, res) => {
-            if(err)
+            if(err) {
+                console.log(err)
                 resolve({error: true});
+            }
 
             else
                 resolve(res.rows[0]);
@@ -46,19 +48,38 @@ function addCategories(categories, recipeid) {
     });
 }
 
-async function deleteRecipe(recipeName) {
-    const query = {
-        text: "DELETE FROM RECIPE WHERE recipeName = $1",
-        values: [recipeName],
-    }
-    var result;
-    try{
-        result = await db.query(query)
-    } catch(err) {
-        console.error(err)
-        result = err;
-    }
-    return result;
+function deleteRecipe(recipeId, recipeOwner) {
+    return new Promise((resolve, reject) => {
+        let query = {
+            text: 'SELECT * FROM RECIPE WHERE recipeId = $1',
+            values: [recipeId]
+        };
+
+        db.query(query, (err, res) => {
+            if(err || !res.rowCount)
+                resolve({error: true, details: 'An error occurred while fetching the recipe.'});
+
+            else {
+                if(recipeOwner.email == res.rows[0].useremail) {
+                    query = {
+                        text: "DELETE FROM RECIPE WHERE recipeId = $1",
+                        values: [recipeId],
+                    };
+
+                    db.query(query, (err, res) => {
+                        if(err)
+                            resolve({error: true, details: 'An error occurred while deleting the recipe.'});
+
+                        else
+                            resolve({error: false});
+                    });
+                }
+
+                else
+                    resolve({error: true, details: "An error occurred while deleting the recipe. Recipe doesn't belong to provided user."});
+            }
+        });
+    });
 }
 
 module.exports = { addRecipe, addIngredients, addCategories, deleteRecipe };
