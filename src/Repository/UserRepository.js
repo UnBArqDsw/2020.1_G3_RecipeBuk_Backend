@@ -71,7 +71,7 @@ function deleteUser(email, password) {
 
 function getUser(sessionId) {
     return new Promise((resolve, reject) => {
-        const query = {
+        let query = {
             text: 'SELECT userEmail FROM USER_SESSION WHERE sessionId = $1',
             values: [sessionId]
         };
@@ -79,8 +79,20 @@ function getUser(sessionId) {
             if(err || !res.rowCount)
                 resolve({user: null});
 
-            else
-                resolve({user: res.rows[0].useremail});
+            else {
+                query = {
+                    text: 'SELECT * FROM USER_ACCOUNT WHERE email = $1',
+                    values: [res.rows[0].useremail]
+                };
+
+                db.query(query, (err, res) => {
+                    if(err || !res.rowCount)
+                        resolve({user: null});
+
+                    else
+                        resolve({user: res.rows[0]});
+                });
+            }
         });
     });
 }
@@ -157,39 +169,37 @@ function logout(userSession) {
     });
 }
 
-function updateUser(info, auth) {
+function updateUser(info, auth, password) {
     return new Promise((resolve, reject) => {
         getUser(auth).then((result) => {
-            if(result.error)
+            if(!result.user)
                 resolve({error: true, details: 'An error occurred while fetching your user. Invalid user session.'});
 
             else {
-                let query = {
-                    text: 'SELECT * FROM USER_ACCOUNT WHERE email = $1',
-                    values: [result.user]
-                };
-
-                db.query(query, (error, res) => {
-                    if(error || !res.rowCount) {
-                        console.log(res)
-                        resolve({error: true, details: "An error occurred while validating your credentials. Invalid user or user doesn't exist."});
-                    }
+                bcrypt.compare(password, result.user.password, (err, res) => {
+                    if(err)
+                        resolve({error: true, details: 'An error occurred while validating your credentials. Invalid or wrong password.'});
 
                     else {
-                        query = {
-                            text: "UPDATE USER_ACCOUNT SET name = $1, email = $2 WHERE email = $3",
-                            values: [info.name ? info.name : res.rows[0].name, info.email ? info.email : res.rows[0].email, result.user],
-                        };
+                        if(res) {
+                            const query = {
+                                text: "UPDATE USER_ACCOUNT SET name = $1, email = $2 WHERE email = $3",
+                                values: [info.name ? info.name : res.rows[0].name, info.email ? info.email : res.rows[0].email, result.user.email],
+                            };
 
-                        db.query(query, (err, result) => {
-                            if(err)
-                                resolve({error: true, details: 'An error occurred while updating your account details.'});
+                            db.query(query, (err, result) => {
+                                if(err)
+                                    resolve({error: true, details: 'An error occurred while updating your account details.'});
 
-                            else
-                                resolve({error: false});
-                        });
+                                else
+                                    resolve({error: false});
+                            });
+                        }
+
+                        else
+                            resolve({error: true, details: 'An error occurred while validating your credentials. Wrong password.'})
                     }
-                });  
+                });
             }
         });
     });

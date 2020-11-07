@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt');
 
 routes.post('/createUser', async (req, res, next) => {
     var body = req.body;
-    //Check for bad passwords
+
     userRepository.addUser(body.name, body.email, body.password).then(response => res.json(response));
 });
 
@@ -31,7 +31,7 @@ routes.post('/logout', async (req, res, next) => {
 });
 
 routes.post('/updateUser', async (req, res, next) => {
-    userRepository.updateUser(req.body.newUser, req.body.auth).then(response => res.json(response));
+    userRepository.updateUser(req.body.info, req.body.auth, req.body.password).then(response => res.json(response));
 });
 
 routes.post('/getFavorites', (req, res) => {
