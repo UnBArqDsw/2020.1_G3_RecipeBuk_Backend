@@ -6,7 +6,6 @@ require("firebase/auth");
 var firebase = require("firebase/app");
 var admin = require('firebase-admin');
 
-
 routes.post('/createUser', async (req, res, next) => {
     var body = req.body;
     userRepository.addUser(body.name, body.email).then(ret => {
