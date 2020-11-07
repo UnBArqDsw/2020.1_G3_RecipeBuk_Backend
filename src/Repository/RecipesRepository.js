@@ -51,4 +51,39 @@ function addCategories(categories, recipeid) {
     });
 }
 
-module.exports = { addRecipe, addIngredients, addCategories };
+function deleteRecipe(recipeId, recipeOwner) {
+    return new Promise((resolve, reject) => {
+        let query = {
+            text: 'SELECT * FROM RECIPE WHERE recipeId = $1',
+            values: [recipeId]
+        };
+
+        db.query(query, (err, res) => {
+            if(err || !res.rowCount)
+                resolve({error: true, details: 'An error occurred while fetching the recipe.'});
+
+            else {
+                if(recipeOwner.email == res.rows[0].useremail) {
+                    query = {
+                        text: "DELETE FROM RECIPE WHERE recipeId = $1",
+                        values: [recipeId],
+                    };
+
+                    db.query(query, (err, res) => {
+                        if(err)
+                            resolve({error: true, details: 'An error occurred while deleting the recipe.'});
+
+                        else
+                            resolve({error: false});
+                    });
+                }
+
+                else
+                    resolve({error: true, details: "An error occurred while deleting the recipe. Recipe doesn't belong to provided user."});
+            }
+        });
+    });
+}
+
+module.exports = { addRecipe, addIngredients, addCategories, deleteRecipe };
+

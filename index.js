@@ -1,6 +1,5 @@
 const bodyParser = require('body-parser')
 const configRoutes = require('./src/routes/Router');
-const firebaseConfig = require('./config/configFirebase');
 const express = require('express');
 const cors = require('cors');
 
@@ -12,6 +11,5 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 require('./src/routes/Router')(app);
 configRoutes(app)
-firebaseConfig()
 
 app.listen(3000)
