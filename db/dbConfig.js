@@ -3,7 +3,7 @@ const { Pool, Client } = require('pg');
 const connectionString = process.env.DB_URL;
 
 const pool = new Pool({
-    connectionString: connectionString,
+  connectionString: connectionString,
 });
 
 pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema'", (err, res) => {
@@ -17,6 +17,7 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
             pool.query(`CREATE TABLE USER_ACCOUNT (
                             email VARCHAR(80) NOT NULL,
                             name VARCHAR(50) NOT NULL,
+                            password CHAR(60) NOT NULL,
                             
 	                        CONSTRAINT USER_ACCOUNT_PK PRIMARY KEY (email)
                         );
@@ -32,7 +33,7 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
 	                        
 	                        CONSTRAINT RECIPE_PK PRIMARY KEY (recipeId),
 	                        CONSTRAINT RECIPE_USER_ACCOUNT_FK FOREIGN KEY (userEmail)
-		                        REFERENCES USER_ACCOUNT (email)
+		                        REFERENCES USER_ACCOUNT (email)  ON DELETE CASCADE
                         );
 
                         CREATE TABLE RECIPE_BOOK (
@@ -44,7 +45,7 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
 	                        
 	                        CONSTRAINT RECIPE_BOOK_PK PRIMARY KEY (bookId),
 	                        CONSTRAINT RECIPE_BOOK_USER_ACCOUNT_FK FOREIGN KEY (userEmail)
-		                        REFERENCES USER_ACCOUNT (email)
+		                        REFERENCES USER_ACCOUNT (email)  ON DELETE CASCADE ON UPDATE CASCADE
                         );
 
                         CREATE TABLE USER_SESSION (
@@ -54,7 +55,7 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
 	                        
 	                        CONSTRAINT USER_SESSION_UK UNIQUE (sessionId),
 	                        CONSTRAINT USER_SESSION_USER_ACCOUNT_FK FOREIGN KEY (userEmail)
-		                        REFERENCES USER_ACCOUNT (email)
+		                        REFERENCES USER_ACCOUNT (email)  ON DELETE CASCADE ON UPDATE CASCADE
                         );
 
                         CREATE TABLE FAVORITE (
@@ -63,7 +64,7 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
 	                        
                             CONSTRAINT STEP_UK UNIQUE (userEmail, recipeLink),
 	                        CONSTRAINT STEP_USER_ACCOUNT_FK FOREIGN KEY (userEmail)
-		                        REFERENCES USER_ACCOUNT (email)
+		                        REFERENCES USER_ACCOUNT (email)  ON DELETE CASCADE ON UPDATE CASCADE
                         );
 
                         CREATE TABLE CATEGORY (
@@ -86,9 +87,9 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
 	                        
                             CONSTRAINT contains_UK UNIQUE (recipeId, bookId),
 	                        CONSTRAINT contains_RECIPE_FK FOREIGN KEY (recipeId)
-		                        REFERENCES RECIPE (recipeId),
+		                        REFERENCES RECIPE (recipeId)  ON DELETE CASCADE,
 	                        CONSTRAINT contains_RECIPE_BOOK_FK FOREIGN KEY (bookId)
-		                        REFERENCES RECIPE_BOOK (bookId)
+		                        REFERENCES RECIPE_BOOK (bookId)  ON DELETE CASCADE
                         );
 
                         CREATE TABLE uses (
@@ -99,9 +100,9 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
 	                        
                             CONSTRAINT uses_UK UNIQUE (ingredientId, recipeId),
 	                        CONSTRAINT uses_INGREDIENT_FK FOREIGN KEY (ingredientId)
-		                        REFERENCES INGREDIENT (ingredientId),
+		                        REFERENCES INGREDIENT (ingredientId)  ON DELETE CASCADE,
 	                        CONSTRAINT uses_RECIPE_FK FOREIGN KEY (recipeId)
-		                        REFERENCES RECIPE (recipeId)
+		                        REFERENCES RECIPE (recipeId)  ON DELETE CASCADE
                         );
 
                         CREATE TABLE categorizes (
@@ -110,9 +111,9 @@ pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' 
 	                        
                             CONSTRAINT categorizes_UK UNIQUE (idCategory, recipeId),
 	                        CONSTRAINT categorizes_CATEGORY_FK FOREIGN KEY (idCategory)
-		                        REFERENCES CATEGORY (idCategory),
+		                        REFERENCES CATEGORY (idCategory)  ON DELETE CASCADE,
 	                        CONSTRAINT categorizes_RECIPE_FK FOREIGN KEY (recipeId)
-		                        REFERENCES RECIPE (recipeId)
+		                        REFERENCES RECIPE (recipeId)  ON DELETE CASCADE
                         );`, (err, res) => {
                             if(err) {
                                 console.log("Failed creating Database");

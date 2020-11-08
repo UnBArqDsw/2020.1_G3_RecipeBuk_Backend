@@ -16,8 +16,7 @@ routes.post('/addRecipe', async (req, res, next) => {
 
     if(ingredients.length) {
         userRepository.getUser(req.body.auth).then((response) => {
-            if(response.user) {
-                console.log(response)
+            if(response.user.email) {
                 recipesRepository.addRecipe(response.user.email, req.body.name, req.body.time, req.body.portions, req.body.visibility, req.body.steps).then((response) => {
                     if(response.error)
                         return res.json(response);
