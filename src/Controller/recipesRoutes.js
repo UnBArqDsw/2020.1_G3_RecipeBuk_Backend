@@ -12,7 +12,7 @@ routes.post('/addRecipe', async (req, res, next) => {
             })
         } else {
             res.status(200).json({
-                Message: "Receita Adicionada!"
+                Message: "Receita Adicionada !"
             })
         }        
     })
