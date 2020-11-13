@@ -4,17 +4,19 @@ const userRepository = require('../Repository/UserRepository');
 const bookRepository = require('../Repository/BookRepository');
 
 routes.post('/createBook', (req, res) => {
-    userRepository.getUser(req.body.auth).then((user) => {
-        if(user) {
-            bookRepository.createBook(user, req.body.title, req.body.description. req.body.visibility);
-        }
+    userRepository.getUser(req.body.auth).then((response) => {
+        if(response.user)
+            bookRepository.createBook(response.user, req.body.title, req.body.description, req.body.visibility).then(response => res.json(response));
+			
+		else
+			res.json({error: true, description: 'An error occurred while fetching the user. No user found.'});
     });
 });
 
 routes.post('/deleteBook', (req, res) => {
-    userRepository.getUser(req.body.auth).then((user) => {
-        if(user) {
-            bookRepository.deleteBook(user, req.body.bookId);
+    userRepository.getUser(req.body.auth).then((response) => {
+        if(response.user) {
+            bookRepository.deleteBook(response.user, req.body.bookId).then(response => res.json(response));
         }
     });
 });
