@@ -44,10 +44,22 @@ routes.post('/getBook', (req, res) => {
 });
 
 routes.post('/addBookRecipe', (req, res) => {
-	userRepository.getUser(req.body.auth).then((user) => {
-		if(user) {
-			bookRepository.addBookRecipe(user, req.body.bookId, req.body.recipeId);
-		}
+	userRepository.getUser(req.body.auth).then((response) => {
+		if(response.user)
+			bookRepository.addBookRecipe(response.user, req.body.bookId, req.body.recipeId).then(response => res.json(response));
+		
+		else
+			res.json({error: true, description: 'An error occurred while fetching the user. No user found.'});
+	});
+});
+
+routes.post('/deleteBookRecipe', (req, res) => {
+	userRepository.getUser(req.body.auth).then((response) => {
+		if(response.user)
+			bookRepository.deleteBookRecipe(response.user, req.body.bookId, req.body.recipeId).then(response => res.json(response));
+		
+		else
+			res.json({error: true, description: 'An error occurred while fetching the user. No user found.'});
 	});
 });
 

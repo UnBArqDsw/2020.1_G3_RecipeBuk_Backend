@@ -69,7 +69,7 @@ function getBooks(user) {
 
 function getBook(user, bookId) {
 	return new Promise((resolve, reject) => {
-		let query = {
+		const query = {
 			text: "SELECT * from RECIPE_BOOK WHERE bookId = $1",
 			values: [bookId]
 		};
@@ -92,8 +92,84 @@ function getBook(user, bookId) {
 }
 
 function addBookRecipe(user, bookId, recipeId) {
+	return new Promise((resolve, reject) => {
+		let query = {
+			text: "SELECT * from RECIPE_BOOK WHERE bookId = $1",
+			values: [bookId]
+		};
+		
+		db.query(query, (err, res) => {
+			if(err || !res.rowCount)
+				resolve({error: true, description: 'An error occurred while fetching the book.'});
+				
+			else {
+				if(res.rows[0].useremail != user.email)
+					resolve({error: true, description: 'An error has occurred while fetching the book. Permission denied.'});
+				
+				else {
+					query = {
+						text: "SELECT * FROM RECIPE WHERE recipeId = $1",
+						values: [recipeId]
+					};
+					
+					db.query(query, (err, res) => {
+						if(res.rows[0].useremail != user.email && !res.rows[0].visibility)
+							resolve({error: true, description: 'An error has occurred while fetching the recipe. Permission denied.'});
+							
+						else {
+							query = {
+								text: "INSERT INTO contains VALUES($1, $2)",
+								values: [recipeId, bookId]
+							};
+							
+							db.query(query, (err, res) => {
+								if(err)
+									resolve({error: true, description: 'An error occurred while ading the recipe to the book.'});
+								
+								else
+									resolve({error: false});
+							});
+						}
+					});
+				}
+			}
+		});
+	});
+}
 
+function deleteBookRecipe(user, bookId, recipeId) {
+	return new Promise((resolve, reject) => {
+		let query = {
+			text: "SELECT * FROM RECIPE_BOOK WHERE bookId = $1",
+			values: [bookId]
+		};
+		
+		db.query(query, (err, res) => {
+			if(err || !res.rowCount)
+				resolve({error: true, description: 'An error occurred while fetching the book.'});
+				
+			else {
+				if(res.rows[0].useremail != user.email)
+					resolve({error: true, description: 'An error has occurred while fetching the book. Permission denied.'});
+				
+				else {
+					query = {
+						text: "DELETE FROM contains WHERE recipeId = $1 AND bookId = $2",
+						values: [recipeId, bookId]
+					};
+					
+					db.query(query, (err, res) => {
+						if(err)
+							resolve({error: true, description: 'An error occurred while deleting the recipe from the book.'});
+							
+						else
+							resolve({error: false});
+					});
+				}
+			}
+		});
+	});
 }
 
 
-module.exports = { createBook, deleteBook, getBooks, getBook, addBookRecipe };
+module.exports = { createBook, deleteBook, getBooks, getBook, addBookRecipe, deleteBookRecipe };
