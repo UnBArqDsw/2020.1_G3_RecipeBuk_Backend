@@ -69,7 +69,7 @@ function getBooks(user) {
 
 function getBook(user, bookId) {
 	return new Promise((resolve, reject) => {
-		const query = {
+		let query = {
 			text: "SELECT * from RECIPE_BOOK WHERE bookId = $1",
 			values: [bookId]
 		};
@@ -84,7 +84,18 @@ function getBook(user, bookId) {
 				
 				else {
 					const book = res.rows[0];
-					resolve({error: false, bookid: book.bookid, title: book.title, description: book.description, visibility: book.visibility});
+					query = {
+						text: "SELECT RECIPE.recipeid, RECIPE.name, RECIPE.time, RECIPE.portions, RECIPE.visibility FROM contains RIGHT JOIN RECIPE ON RECIPE.recipeId = contains.recipeId WHERE bookId = $1",
+						values: [bookId]
+					};
+					
+					db.query(query, (err, res) => {
+						if(err)
+							resolve({error: true, description: 'An error has occurred while fetching the book recipes.'});
+							
+						else
+							resolve({error: false, bookid: book.bookid, title: book.title, description: book.description, visibility: book.visibility, recipes: res.rows});							
+					});
 				}
 			}
 		});
