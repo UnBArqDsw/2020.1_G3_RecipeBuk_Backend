@@ -208,13 +208,12 @@ function updateUser(info, auth, password) {
 function getFavorites(auth) {
     return new Promise((resolve, reject) => {
         const query = {
-            text: `SELECT FAVORITE.recipeLink
+            text: `SELECT FAVORITE.recipeLink, FAVORITE.recipeTitle, FAVORITE.recipeImage
                     FROM USER_SESSION INNER JOIN USER_ACCOUNT ON USER_ACCOUNT.email = USER_SESSION.userEmail
                     INNER JOIN FAVORITE ON FAVORITE.userEmail = USER_ACCOUNT.email
                     WHERE USER_SESSION.sessionId = $1`,
             values: [auth]
         };
-        let favorites = [];
 
         db.query(query, (error, response) => {
             if(error) {
@@ -222,15 +221,13 @@ function getFavorites(auth) {
                 resolve([]);
             }
 
-            else {
-                response.rows.forEach(row => favorites.push(row.recipelink));
-                resolve(favorites);
-            }
+            else
+                resolve(response.rows);
         });
     });
 }
 
-function favorite(auth, recipelink) {
+function favorite(auth, recipeLink, recipeTitle, recipeImage) {
     return new Promise((resolve, reject) => {
         db.query('SELECT userEmail FROM USER_SESSION WHERE sessionId = $1', [auth], (error, response) => {
             if(error) {
@@ -240,7 +237,7 @@ function favorite(auth, recipelink) {
 
             else {
                 if(response.rows.length) {
-                    db.query('INSERT INTO FAVORITE VALUES ($1, $2)', [response.rows[0].useremail, recipelink], (error, response) => {
+                    db.query('INSERT INTO FAVORITE VALUES ($1, $2, $3, $4)', [response.rows[0].useremail, recipeLink, recipeImage, recipeTitle], (error, response) => {
                         if(error) {
                             if(error.code == 23505) {
                                 db.query('DELETE FROM FAVORITE WHERE recipelink = $1', [recipelink], (error, response) => {

@@ -39,7 +39,7 @@ routes.post('/getFavorites', (req, res) => {
 });
 
 routes.post('/favorite', (req, res) => {
-    userRepository.favorite(req.body.auth, req.body.recipelink).then(response => res.json(response));
+    userRepository.favorite(req.body.auth, req.body.recipeLink, req.body.recipeTitle, req.body.recipeImage).then(response => res.json(response));
 });
 
 module.exports = routes;
