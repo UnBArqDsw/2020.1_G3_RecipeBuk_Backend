@@ -34,7 +34,7 @@ function getRecipe(recipeId, auth) {
                     resolve({ recipe: res.rows[0] });
                 else{
                     UserRepository.getUser(auth).then(response =>{
-                        if(response.user.email == res.rows[0].userEmail){
+                        if(response.user.email == res.rows[0].useremail){
                             resolve({ recipe: res.rows[0] });
                         } else {
                             resolve({ error: true, details: 'This user does not have permission to see this recipe.'});
