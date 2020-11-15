@@ -1,94 +1,89 @@
-
 const db = require('../../db/dbConfig');
 
-async function addRecipe(recipeName, time, yield) {
-    const query = {
-        text: "INSERT INTO RECIPE(name, time, portions) VALUES($1, $2, $3)", 
-        values: [recipeName, time, yield],
-    }
-    
-    db.query(query, (err, res) => {
-        if (err) {
-            console.log("Erro: ", err);
-            return err;
-            
-        } else {
-            console.log("Receita adicionada!", res);
-            return "Receita adicionada!"
-        }
-    })
+function addRecipe(userEmail, recipeName, time, portions, visibility, steps) {
+    return new Promise((resolve, reject) => {
+        const query = {
+            text: 'INSERT INTO RECIPE(useremail, name, time, portions, visibility, steps) VALUES($1, $2, $3, $4, $5, $6) RETURNING recipeid',
+            values: [userEmail, recipeName, time, portions, visibility, steps]
+        };
+
+        db.query(query, (err, res) => {
+            if(err)
+                resolve({error: true, details: 'An error occurred while adding the recipe information.'});
+
+            else
+                resolve(res.rows[0]);
+        });
+    });
 }
 
-async function addStep(preparationMode) {
-    const query = {
-        text: "INSERT INTO STEP(instruction) VALUES($3)", 
-        values: [preparationMode],
-    }
-    
-    db.query(query, (err, res) => {
-        if (err) {
-            console.log("Erro: ", err);
-            return err;
-            
-        } else {
-            console.log("Passo adicionado!", res);
-            return "Passo adicionado!"
+function addIngredients(ingredients, recipeid) {
+    return new Promise(async function (resolve, reject) {
+        for(let ingredient of ingredients) {
+            try {
+                const res = await db.query(`INSERT INTO INGREDIENT(name) VALUES($1) RETURNING ingredientid`, [ingredient.name]);
+                await db.query('INSERT INTO uses VALUES($1, $2, $3, $4)', [res.rows[0].ingredientid, recipeid, ingredient.unit, ingredient.quantity]);
+            } catch(err) {
+                resolve({error: true, details: 'An error occurred while adding one of the ingredients.'});
+            }
         }
-    })
+
+        resolve({error: false, recipeid: recipeid});
+    });
 }
 
-async function addCategory(category) {
-    const query = {
-        text: "INSERT INTO CATEGORY(name) VALUES($2)", 
-        values: [category],
-    }
-    
-    db.query(query, (err, res) => {
-        if (err) {
-            console.log("Erro: ", err);
-            return err;
-            
-        } else {
-            console.log("Categoria adicionada!", res);
-            return "Categoria adicionada!"
+function addCategories(categories, recipeid) {
+    return new Promise(async function (resolve, reject) {
+        categories.forEach((category) => {
+            if(typeof category != 'number')
+                resolve({error: true, details: `An error occurred while adding one of the categories which has an invalid type. Expected Number got ${typeof category}.`});
+        });
+
+        for(let category of categories) {
+            try {
+                await db.query('INSERT INTO categorizes VALUES($1, $2)', [category, recipeid]);
+            } catch(err) {
+                resolve({error: true, details: 'An error occurred while adding one of the categories.'});
+            }
         }
-    })
+
+        resolve({error: false});
+    });
 }
 
-async function addIngredient(ingredient) {
-    const query = {
-        text: "INSERT INTO INGREDIENT(name) VALUES($2)", 
-        values: [ingredient],
-    }
-    
-    db.query(query, (err, res) => {
-        if (err) {
-            console.log("Erro: ", err);
-            return err;
-            
-        } else {
-            console.log("Ingrediente adicionado!", res);
-            return "Ingrediente adicionado!"
-        }
-    })
+function deleteRecipe(recipeId, recipeOwner) {
+    return new Promise((resolve, reject) => {
+        let query = {
+            text: 'SELECT * FROM RECIPE WHERE recipeId = $1',
+            values: [recipeId]
+        };
+
+        db.query(query, (err, res) => {
+            if(err || !res.rowCount)
+                resolve({error: true, details: 'An error occurred while fetching the recipe.'});
+
+            else {
+                if(recipeOwner.email == res.rows[0].useremail) {
+                    query = {
+                        text: "DELETE FROM RECIPE WHERE recipeId = $1",
+                        values: [recipeId],
+                    };
+
+                    db.query(query, (err, res) => {
+                        if(err)
+                            resolve({error: true, details: 'An error occurred while deleting the recipe.'});
+
+                        else
+                            resolve({error: false});
+                    });
+                }
+
+                else
+                    resolve({error: true, details: "An error occurred while deleting the recipe. Recipe doesn't belong to provided user."});
+            }
+        });
+    });
 }
 
-async function addUses(unity, quantity) {
-    const query = {
-        text: "INSERT INTO uses(unit, quantity) VALUES($3, $4)", 
-        values: [unity, quantity],
-    }
-    
-    db.query(query, (err, res) => {
-        if (err) {
-            console.log("Erro: ", err);
-            return err;
-            
-        } else {
-            console.log("Utilitários adicionados!", res);
-            return "Utilitários adicionados!"
-        }
-    })
-}
-
+module.exports = { addRecipe, addIngredients, addCategories, deleteRecipe };
 
