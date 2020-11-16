@@ -35,10 +35,14 @@ function getRecipe(recipeId, auth) {
                         resolve({ recipe: res.rows[0] });
                     else {
                         UserRepository.getUser(auth).then(response => {
-                            if (response.user.email == res.rows[0].useremail) {
-                                resolve({ recipe: res.rows[0] });
+                            if (response.user) {
+                                if (response.user.email == res.rows[0].useremail) {
+                                    resolve({ recipe: res.rows[0] });
+                                } else {
+                                    resolve({ error: true, details: 'This user does not have permission to see this recipe.' });
+                                }
                             } else {
-                                resolve({ error: true, details: 'This user does not have permission to see this recipe.' });
+                                resolve({ error: true, details: 'An error occurred while getting the recipe information.' });
                             }
                         })
                     }
@@ -52,7 +56,7 @@ function getRecipe(recipeId, auth) {
 
 function getAllRecipes(auth) {
     function checkVisibility(row) {
-        if(row.visibility) {
+        if (row.visibility) {
             return true;
         }
         return false;
@@ -70,10 +74,8 @@ function getAllRecipes(auth) {
         db.query(query, (err, res) => {
             if (err)
                 resolve({ error: true, details: 'An error occurred while getting the recipes.' });
-
             else {
                 if (res.rows[0])
-
                     if (res.rows.every(checkVisibility))
                         resolve({ recipe: res.rows });
                     else {
@@ -85,6 +87,9 @@ function getAllRecipes(auth) {
                             }
                         })
                     }
+                else {
+                    resolve({ error: true, details: 'An error occurred while getting the recipes.' });
+                }
             }
         });
     });
