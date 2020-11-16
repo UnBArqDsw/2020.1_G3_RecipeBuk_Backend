@@ -46,6 +46,38 @@ function getRecipe(recipeId, auth) {
     });
 }
 
+function getAllRecipes(auth) {
+    return new Promise((resolve, reject) => {
+        const query = {
+            text: `SELECT *
+            FROM RECIPE
+            INNER JOIN USER_SESSION
+            ON RECIPE.useremail = USER_SESSION.useremail
+            WHERE sessionid = $1`,
+            values: [auth]
+        };
+
+        db.query(query, (err, res) => {
+            if (err)
+                resolve({ error: true, details: 'An error occurred while getting the recipes.' });
+
+            else {
+                if (res.rows[0].visibility)
+                    resolve({ recipe: res.rows });
+                else{
+                    UserRepository.getUser(auth).then(response =>{
+                        if(response.user.email == res.rows[0].useremail){
+                            resolve({ recipe: res.rows[0] });
+                        } else {
+                            resolve({ error: true, details: 'This user does not have permission to see these recipes.'});
+                        }
+                    })
+                }
+            }   
+        });
+    });
+}
+
 function addIngredients(ingredients, recipeid) {
     return new Promise(async function (resolve, reject) {
         for (let ingredient of ingredients) {
@@ -100,7 +132,7 @@ function deleteRecipe(recipeId, recipeOwner) {
 
                     db.query(query, (err, res) => {
                         if (err)
-                            resolve({ error: true, details: 'An error occurred while deleting the recipe.' });
+                            resolve({ error: true, details: 'An error occurregetReciped while deleting the recipe.' });
 
                         else
                             resolve({ error: false });
@@ -114,5 +146,5 @@ function deleteRecipe(recipeId, recipeOwner) {
     });
 }
 
-module.exports = { addRecipe, addIngredients, addCategories, deleteRecipe, getRecipe };
+module.exports = { addRecipe, addIngredients, addCategories, deleteRecipe, getRecipe, getAllRecipes };
 
