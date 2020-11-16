@@ -202,7 +202,7 @@ routes.get('/', async (req, res, next) => {
 						optional: false
 					},
 					{
-						name: 'recipeid',
+						name: 'recipeId',
 						type: 'int',
 						optional: false
 					}
@@ -217,7 +217,7 @@ routes.get('/', async (req, res, next) => {
 						optional: false
 					},
 					{
-						name: 'recipeid',
+						name: 'recipeId',
 						type: 'int',
 						optional: false
 					}
