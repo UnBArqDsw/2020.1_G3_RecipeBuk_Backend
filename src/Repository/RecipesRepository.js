@@ -30,18 +30,57 @@ function getRecipe(recipeId, auth) {
                 resolve({ error: true, details: 'An error occurred while getting the recipe information.' });
 
             else {
-                if (res.rows[0].visibility)
-                    resolve({ recipe: res.rows[0] });
-                else{
-                    UserRepository.getUser(auth).then(response =>{
-                        if(response.user.email == res.rows[0].useremail){
-                            resolve({ recipe: res.rows[0] });
-                        } else {
-                            resolve({ error: true, details: 'This user does not have permission to see this recipe.'});
-                        }
-                    })
+                if (res.rows[0])
+                    if (res.rows[0].visibility)
+                        resolve({ recipe: res.rows[0] });
+                    else {
+                        UserRepository.getUser(auth).then(response => {
+                            if (response.user) {
+                                if (response.user.email == res.rows[0].useremail) {
+                                    resolve({ recipe: res.rows[0] });
+                                } else {
+                                    resolve({ error: true, details: 'This user does not have permission to see this recipe.' });
+                                }
+                            } else {
+                                resolve({ error: true, details: 'An error occurred while getting the recipe information.' });
+                            }
+                        })
+                    }
+                else {
+                    resolve({ error: true, details: 'An error occurred while fetching the recipe.' });
                 }
-            }   
+            }
+        });
+    });
+}
+
+function getAllRecipes(auth) {
+    function checkVisibility(row) {
+        if (row.visibility) {
+            return true;
+        }
+        return false;
+    }
+    return new Promise((resolve, reject) => {
+        const query = {
+            text: `SELECT name, time, portions, visibility, sessionid, RECIPE.useremail, expirationdate
+            FROM RECIPE
+            INNER JOIN USER_SESSION
+            ON RECIPE.useremail = USER_SESSION.useremail
+            WHERE sessionid = $1`,
+            values: [auth]
+        };
+
+        db.query(query, (err, res) => {
+            if (err)
+                resolve({ error: true, details: 'An error occurred while getting the recipes.' });
+            else {
+                if (res.rows[0])
+                    resolve({ recipe: res.rows });
+                else {
+                    resolve({ error: true, details: 'An error occurred while getting the recipes.' });
+                }
+            }
         });
     });
 }
@@ -100,7 +139,7 @@ function deleteRecipe(recipeId, recipeOwner) {
 
                     db.query(query, (err, res) => {
                         if (err)
-                            resolve({ error: true, details: 'An error occurred while deleting the recipe.' });
+                            resolve({ error: true, details: 'An error occurregetReciped while deleting the recipe.' });
 
                         else
                             resolve({ error: false });
@@ -114,5 +153,5 @@ function deleteRecipe(recipeId, recipeOwner) {
     });
 }
 
-module.exports = { addRecipe, addIngredients, addCategories, deleteRecipe, getRecipe };
+module.exports = { addRecipe, addIngredients, addCategories, deleteRecipe, getRecipe, getAllRecipes };
 
