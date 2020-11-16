@@ -29,11 +29,13 @@ function getRecipe(recipeId, auth) {
             if (err)
                 resolve({ error: true, details: 'An error occurred while getting the recipe information.' });
 
-            else {
+            else if(res.rows[0]){
                 if (res.rows[0].visibility)
                     resolve({ recipe: res.rows[0] });
                 else{
                     UserRepository.getUser(auth).then(response =>{
+                        if(!response.user)
+                            resolve({ error: true, details: 'User not found'});
                         if(response.user.email == res.rows[0].useremail){
                             resolve({ recipe: res.rows[0] });
                         } else {
@@ -41,7 +43,9 @@ function getRecipe(recipeId, auth) {
                         }
                     })
                 }
-            }   
+            } else {
+                resolve({ error: true, details: 'Recipe not found' });
+            }  
         });
     });
 }
