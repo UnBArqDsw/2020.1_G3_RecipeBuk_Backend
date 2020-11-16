@@ -59,7 +59,7 @@ function getAllRecipes(auth) {
     }
     return new Promise((resolve, reject) => {
         const query = {
-            text: `SELECT *
+            text: `SELECT name, time, portions, visibility, sessionid, RECIPE.useremail, expirationdate
             FROM RECIPE
             INNER JOIN USER_SESSION
             ON RECIPE.useremail = USER_SESSION.useremail
@@ -79,7 +79,7 @@ function getAllRecipes(auth) {
                     else {
                         UserRepository.getUser(auth).then(response => {
                             if (response.user.email == res.rows[0].useremail) {
-                                resolve({ recipe: res.rows[0] });
+                                resolve({ recipe: res.rows });
                             } else {
                                 resolve({ error: true, details: 'This user does not have permission to see these recipes.' });
                             }
