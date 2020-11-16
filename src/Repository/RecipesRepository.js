@@ -30,23 +30,33 @@ function getRecipe(recipeId, auth) {
                 resolve({ error: true, details: 'An error occurred while getting the recipe information.' });
 
             else {
-                if (res.rows[0].visibility)
-                    resolve({ recipe: res.rows[0] });
-                else{
-                    UserRepository.getUser(auth).then(response =>{
-                        if(response.user.email == res.rows[0].useremail){
-                            resolve({ recipe: res.rows[0] });
-                        } else {
-                            resolve({ error: true, details: 'This user does not have permission to see this recipe.'});
-                        }
-                    })
+                if (res.rows[0])
+                    if (res.rows[0].visibility)
+                        resolve({ recipe: res.rows[0] });
+                    else {
+                        UserRepository.getUser(auth).then(response => {
+                            if (response.user.email == res.rows[0].useremail) {
+                                resolve({ recipe: res.rows[0] });
+                            } else {
+                                resolve({ error: true, details: 'This user does not have permission to see this recipe.' });
+                            }
+                        })
+                    }
+                else {
+                    resolve({ error: true, details: 'An error occurred while fetching the recipe.' });
                 }
-            }   
+            }
         });
     });
 }
 
 function getAllRecipes(auth) {
+    function checkVisibility(row) {
+        if(row.visibility) {
+            return true;
+        }
+        return false;
+    }
     return new Promise((resolve, reject) => {
         const query = {
             text: `SELECT *
@@ -62,18 +72,20 @@ function getAllRecipes(auth) {
                 resolve({ error: true, details: 'An error occurred while getting the recipes.' });
 
             else {
-                if (res.rows[0].visibility)
-                    resolve({ recipe: res.rows });
-                else{
-                    UserRepository.getUser(auth).then(response =>{
-                        if(response.user.email == res.rows[0].useremail){
-                            resolve({ recipe: res.rows[0] });
-                        } else {
-                            resolve({ error: true, details: 'This user does not have permission to see these recipes.'});
-                        }
-                    })
-                }
-            }   
+                if (res.rows[0])
+
+                    if (res.rows.every(checkVisibility))
+                        resolve({ recipe: res.rows });
+                    else {
+                        UserRepository.getUser(auth).then(response => {
+                            if (response.user.email == res.rows[0].useremail) {
+                                resolve({ recipe: res.rows[0] });
+                            } else {
+                                resolve({ error: true, details: 'This user does not have permission to see these recipes.' });
+                            }
+                        })
+                    }
+            }
         });
     });
 }
