@@ -76,17 +76,7 @@ function getAllRecipes(auth) {
                 resolve({ error: true, details: 'An error occurred while getting the recipes.' });
             else {
                 if (res.rows[0])
-                    if (res.rows.every(checkVisibility))
-                        resolve({ recipe: res.rows });
-                    else {
-                        UserRepository.getUser(auth).then(response => {
-                            if (response.user.email == res.rows[0].useremail) {
-                                resolve({ recipe: res.rows });
-                            } else {
-                                resolve({ error: true, details: 'This user does not have permission to see these recipes.' });
-                            }
-                        })
-                    }
+                    resolve({ recipe: res.rows });
                 else {
                     resolve({ error: true, details: 'An error occurred while getting the recipes.' });
                 }
