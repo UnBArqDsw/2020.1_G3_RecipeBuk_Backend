@@ -54,13 +54,41 @@ function getRecipe(recipeId, auth) {
     });
 }
 
+ function getIngredients(recipeid) {
+    return new Promise(async function (resolve, reject)  {
+        const query = {
+            text: 'SELECT ingredientid FROM USES WHERE recipeId = $1',
+            values: [recipeid]
+        };
+        let ids = [];
+        db.query(query,async (err, res) =>{
+            if(err)
+                resolve({ error: true, details: 'An error occurred while getting the ingredient information.' });
+            else{
+                if(res.rows[0]){
+                    res.rows.forEach(ingId => {ids.push(parseInt(ingId.ingredientid)) });
+             
+                          db.query(`SELECT * FROM INGREDIENT WHERE ingredientid IN (${ids})`,(err, res)=>{
+                                if(err)
+                                    resolve({ error: true, details: 'An error occurred while getting the ingredient information.' });
+                                else if (res.rows[0]){                             
+                                    resolve(res.rows);
+                                } else {
+                                    resolve({ error: true, details: 'Ingredient not found' });
+                                }
+                              
+                        })
+
+                } else {
+                    resolve({error: true, details: 'No ingredients found for this recipe'});
+                }
+            }
+        })
+        
+    })
+}
+
 function getAllRecipes(auth) {
-    function checkVisibility(row) {
-        if (row.visibility) {
-            return true;
-        }
-        return false;
-    }
     return new Promise((resolve, reject) => {
         const query = {
             text: `SELECT name, time, portions, visibility, sessionid, RECIPE.useremail, expirationdate
@@ -153,5 +181,5 @@ function deleteRecipe(recipeId, recipeOwner) {
     });
 }
 
-module.exports = { addRecipe, addIngredients, addCategories, deleteRecipe, getRecipe, getAllRecipes };
+module.exports = { addRecipe, addIngredients, addCategories, deleteRecipe, getRecipe, getAllRecipes, getIngredients};
 

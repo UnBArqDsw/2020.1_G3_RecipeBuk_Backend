@@ -40,6 +40,11 @@ routes.post('/addRecipe', async (req, res, next) => {
             else
                 res.json({error: true});
         });
+    } else {
+        res.status(500).json({
+            error: true,
+            details: 'Missing ingredients field'
+        })
     }
 });
 
@@ -59,8 +64,16 @@ routes.get('/getRecipe', async (req, res, next) => {
     var body = req.body;
     
     recipesRepository.getRecipe(body.recipeId, body.auth).then(response => {
-        res.json({
-            response
+        if(response.error){
+            res.json({
+                response
+            })
+        }
+        recipesRepository.getIngredients(body.recipeId).then(ingredients =>{
+            res.json({
+                response,
+                ingredients
+            })
         })
     })
 });
