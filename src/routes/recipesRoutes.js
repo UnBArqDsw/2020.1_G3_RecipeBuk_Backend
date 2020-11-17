@@ -55,4 +55,24 @@ routes.post('/deleteRecipe', async (req, res, next) => {
     });
 });
 
+routes.get('/getRecipe', async (req, res, next) => {
+    var body = req.body;
+    
+    recipesRepository.getRecipe(body.recipeId, body.auth).then(response => {
+        res.json({
+            response
+        })
+    })
+});
+
+routes.get('/getAllRecipes', async (req, res, next) => {
+    var body = req.body;
+    
+    recipesRepository.getAllRecipes(body.auth).then(response => {
+        res.json({
+            response
+        })
+    })
+});
+
 module.exports = routes;

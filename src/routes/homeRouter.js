@@ -148,6 +148,103 @@ routes.get('/', async (req, res, next) => {
 					}
             	],
             },
+			search: {
+				type: 'get',
+				params: [
+					{
+						name: 'query',
+						type: 'string',
+						optional: false
+					}
+				],
+			},
+			addRecipe: {
+				type: 'post',
+				params: [
+					{
+						name: 'ingredients',
+						type: 'array',
+						optional: false,
+						example: [
+							{
+								"name": "name",
+								"unit": "unit",
+								"quantity": 1
+							}
+						]
+					},
+					{
+						name: 'auth',
+						type: 'string',
+						optional: false
+					},
+					{
+						name: 'name',
+						type: 'string',
+						optional: false
+					},
+					{
+						name: 'time',
+						type: 'int',
+						optional: false
+					},
+					{
+						name: 'portions',
+						type: 'int',
+						optional: false
+					},
+					{
+						name: 'visibility',
+						type: 'bool',
+						optional: false
+					},
+					{
+						name: 'steps',
+						type: 'string',
+						optional: false
+					}
+				],
+			},
+			deleteRecipe: {
+				type: 'post',
+				params: [
+					{
+						name: 'auth',
+						type: 'string',
+						optional: false
+					},
+					{
+						name: 'recipeId',
+						type: 'int',
+						optional: false
+					}
+				],
+			},
+			getRecipe: {
+				type: 'get',
+				params: [
+					{
+						name: 'auth',
+						type: 'string',
+						optional: false
+					},
+					{
+						name: 'recipeId',
+						type: 'int',
+						optional: false
+					}
+				],
+			},
+			getAllRecipes: {
+				type: 'get',
+				params: [
+					{
+						name: 'auth',
+						type: 'string',
+						optional: false
+					}
+				],
+			},
 			
 			createBook: {
             	type: 'post',
