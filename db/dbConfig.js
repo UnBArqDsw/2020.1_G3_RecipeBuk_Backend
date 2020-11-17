@@ -6,6 +6,7 @@ const tries = 5;
 const pool = new Pool({
     connectionString: connectionString,
 });
+
 while (tries > 0) {
     try {
         pool.query("SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema'", (err, res) => {
@@ -59,6 +60,8 @@ while (tries > 0) {
                                 CREATE TABLE FAVORITE (
                                     userEmail VARCHAR(80) NOT NULL,
                                     recipeLink VARCHAR(100) NOT NULL,
+									recipeImage VARCHAR(200) NOT NULL,
+									recipeTitle VARCHAR(60) NOT NULL,
                                     
                                     CONSTRAINT STEP_UK UNIQUE (userEmail, recipeLink),
                                     CONSTRAINT STEP_USER_ACCOUNT_FK FOREIGN KEY (userEmail)
