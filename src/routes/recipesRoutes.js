@@ -65,7 +65,7 @@ routes.get('/getRecipe', async (req, res, next) => {
     })
 });
 
-routes.get('/getAllRecipes', async (req, res, next) => {
+routes.post('/getAllRecipes', async (req, res, next) => {
     var body = req.body;
     
     recipesRepository.getAllRecipes(body.auth).then(response => {
