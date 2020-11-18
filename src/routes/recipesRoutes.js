@@ -11,7 +11,7 @@ routes.post('/deleteRecipe', async (req, res, next) => {
     recipeController.deleteRecipe(req, res, next);
 });
 
-routes.get('/getRecipe', async (req, res, next) => {
+routes.post('/getRecipe', async (req, res, next) => {
     recipeController.getRecipeById(req, res, next);
 });
 
