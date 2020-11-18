@@ -91,7 +91,7 @@ function getRecipe(recipeId, auth) {
 function getAllRecipes(auth) {
     return new Promise((resolve, reject) => {
         const query = {
-            text: `SELECT name, time, portions, visibility, sessionid, RECIPE.useremail, expirationdate
+            text: `SELECT name, time, portions, visibility, sessionid, RECIPE.useremail, expirationdate, recipeId
             FROM RECIPE
             INNER JOIN USER_SESSION
             ON RECIPE.useremail = USER_SESSION.useremail
