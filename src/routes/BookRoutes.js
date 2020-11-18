@@ -1,66 +1,29 @@
 const express = require('express');
 const routes = express.Router();
-const userRepository = require('../Repository/UserRepository');
-const bookRepository = require('../Repository/BookRepository');
+const bookController = require('../controller/BookController');
 
-routes.post('/createBook', (req, res) => {
-	userRepository.getUser(req.body.auth).then((response) => {
-		if(response.user)
-			bookRepository.createBook(response.user, req.body.title, req.body.description, req.body.visibility).then(response => res.json(response));
-			
-		else
-			res.json({error: true, description: 'An error occurred while fetching the user. No user found.'});
-	});
+routes.post('/createBook', (req, res, next) => {
+	bookController.createBook(req, res, next);
 });
 
-routes.post('/deleteBook', (req, res) => {
-	userRepository.getUser(req.body.auth).then((response) => {
-		if(response.user)
-			bookRepository.deleteBook(response.user, req.body.bookId).then(response => res.json(response));
-		
-		else
-			res.json({error: true, description: 'An error occurred while fetching the user. No user found.'});
-	});
+routes.post('/deleteBook', (req, res, next) => {
+	bookController.deleteBook(req, res);
 });
 
-routes.post('/getBooks', (req, res) => {
-	userRepository.getUser(req.body.auth).then((response) => {
-		if(response.user)
-			bookRepository.getBooks(response.user).then(response => res.json(response));
-		
-		else
-			res.json({error: true, description: 'An error occurred while fetching the user. No user found.'});
-	});
+routes.post('/getBooks', (req, res, next) => {
+	bookController.getBooks(req, res, next);
 });
 
-routes.post('/getBook', (req, res) => {
-	userRepository.getUser(req.body.auth).then((response) => {
-		if(response.user)
-			bookRepository.getBook(response.user, req.body.bookId).then(response => res.json(response));
-		
-		else
-			res.json({error: true, description: 'An error occurred while fetching the user. No user found.'});
-	});
+routes.post('/getBook', (req, res, next) => {
+	bookController.getBook(req, res, next);
 });
 
-routes.post('/addBookRecipe', (req, res) => {
-	userRepository.getUser(req.body.auth).then((response) => {
-		if(response.user)
-			bookRepository.addBookRecipe(response.user, req.body.bookId, req.body.recipeId).then(response => res.json(response));
-		
-		else
-			res.json({error: true, description: 'An error occurred while fetching the user. No user found.'});
-	});
+routes.post('/addBookRecipe', (req, res, next) => {
+	bookController.addBookRecipe(req, res, next);
 });
 
-routes.post('/deleteBookRecipe', (req, res) => {
-	userRepository.getUser(req.body.auth).then((response) => {
-		if(response.user)
-			bookRepository.deleteBookRecipe(response.user, req.body.bookId, req.body.recipeId).then(response => res.json(response));
-		
-		else
-			res.json({error: true, description: 'An error occurred while fetching the user. No user found.'});
-	});
+routes.post('/deleteBookRecipe', (req, res, next) => {
+	bookController.deleteBookRecipe(req, res, next);
 });
 
 module.exports = routes;
