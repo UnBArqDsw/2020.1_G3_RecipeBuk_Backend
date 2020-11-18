@@ -38,6 +38,11 @@ function addRecipe(req, res, next){
             else
                 res.json({error: true});
         });
+    } else {
+        res.status(500).json({
+            error: true,
+            details: 'Missing ingredients field'
+        })
     }
 }
 
@@ -55,8 +60,20 @@ function deleteRecipe(req, res, next){
 
 function getRecipeById(req, res, next){
     var body = req.body;
-    
-    recipesRepository.getRecipe(body.recipeId, body.auth).then(response => res.json(response));
+   
+    recipesRepository.getRecipe(body.recipeId, body.auth).then(response => {
+        if(response.error){
+            res.json({
+                response
+            })
+        }
+        recipesRepository.getIngredients(body.recipeId).then(ingredients =>{
+            res.json({
+                response,
+                ingredients
+            })
+        })
+    })
 }
 
 function getRecipeList(req, res, next){
