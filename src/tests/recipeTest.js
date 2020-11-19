@@ -1,11 +1,11 @@
 const chai = require('chai');
-const Crawler = require('../models/Crawler');
+const Crawler = require('../models/Ingredient');
 
 const should = chai.should();
 
-describe('Crawler', () => {
+describe('Ingredient', () => {
   it('should get results', (done) => {
-	let test_crawler = new Crawler('bolo');
+	let test_recipes = new Ingredient('bolo');git 
 	
 	test_crawler.getResults().then((results) => {
 		results.should.be.a('Array').that.has.lengthOf(3);
