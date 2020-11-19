@@ -34,4 +34,8 @@ steps:
   inputs:
     codeCoverageTool: 'Cobertura'
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml'
+- task: CmdLine@2
+  displayName: 'Build'
+  inputs:
 
+    script: 'webpack'
