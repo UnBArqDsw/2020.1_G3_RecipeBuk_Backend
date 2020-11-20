@@ -68,7 +68,7 @@ function getIngredients(recipeid) {
                 if (res.rows[0]) {
                     res.rows.forEach(ingId => { ids.push(parseInt(ingId.ingredientid)) });
 
-                    db.query(`SELECT * FROM INGREDIENT WHERE ingredientid IN (${ids})`, (err, res) => {
+                    db.query(`SELECT i.name, u.unit, u.quantity FROM INGREDIENT as i JOIN uses as u ON i.ingredientid = u.ingredientid WHERE i.ingredientid IN (${ids})`, (err, res) => {
                         if (err)
                             resolve({ error: true, details: 'An error occurred while getting the ingredient information.' });
                         else if (res.rows[0]) {
