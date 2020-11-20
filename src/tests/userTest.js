@@ -1,4 +1,4 @@
-const chai = require('chai');
+/*const chai = require('chai');
 const UserRepository = require('../Repository/UserRepository');
 
 const should = chai.should();
@@ -11,4 +11,4 @@ describe('User', () => {
         response.should.have.property('error').to.be('false');
     });
   }).timeout(10000);
-});
+});*/
