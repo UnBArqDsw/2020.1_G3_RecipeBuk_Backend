@@ -46,6 +46,18 @@ function addRecipe(req, res, next){
     }
 }
 
+function updateRecipe(req, res, next){
+    var body = req.body;
+    
+    userRepository.getUser(body.auth).then((response) => {
+        if(response.user)
+            recipesRepository.updateRecipe(body.recipeid, response.user).then(response => res.json(response));
+
+        else
+            res.json({error: true, details: 'An error occurred while fetching the user. User not found.'});
+    });
+}
+
 function deleteRecipe(req, res, next){
     var body = req.body;
     
@@ -83,4 +95,4 @@ function getRecipeList(req, res, next){
 
 }
 
-module.exports = { addRecipe, deleteRecipe, getRecipeById, getRecipeList };
+module.exports = { addRecipe, deleteRecipe, getRecipeById, getRecipeList, updateRecipe };
