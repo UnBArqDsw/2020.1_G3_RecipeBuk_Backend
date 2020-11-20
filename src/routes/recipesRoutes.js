@@ -11,6 +11,10 @@ routes.post('/deleteRecipe', async (req, res, next) => {
     recipeController.deleteRecipe(req, res, next);
 });
 
+routes.post('/updateRecipe', async (req, res, next) => {
+    recipeController.updateRecipe(req, res, next);
+});
+
 routes.post('/getRecipe', async (req, res, next) => {
     recipeController.getRecipeById(req, res, next);
 });

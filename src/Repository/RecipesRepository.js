@@ -54,37 +54,37 @@ function getRecipe(recipeId, auth) {
     });
 }
 
- function getIngredients(recipeid) {
-    return new Promise(async function (resolve, reject)  {
+function getIngredients(recipeid) {
+    return new Promise(async function (resolve, reject) {
         const query = {
             text: 'SELECT ingredientid FROM USES WHERE recipeId = $1',
             values: [recipeid]
         };
         let ids = [];
-        db.query(query,async (err, res) =>{
-            if(err)
+        db.query(query, async (err, res) => {
+            if (err)
                 resolve({ error: true, details: 'An error occurred while getting the ingredient information.' });
-            else{
-                if(res.rows[0]){
-                    res.rows.forEach(ingId => {ids.push(parseInt(ingId.ingredientid)) });
-             
-                          db.query(`SELECT * FROM INGREDIENT WHERE ingredientid IN (${ids})`,(err, res)=>{
-                                if(err)
-                                    resolve({ error: true, details: 'An error occurred while getting the ingredient information.' });
-                                else if (res.rows[0]){                             
-                                    resolve(res.rows);
-                                } else {
-                                    resolve({ error: true, details: 'Ingredient not found' });
-                                }
-                              
-                        })
+            else {
+                if (res.rows[0]) {
+                    res.rows.forEach(ingId => { ids.push(parseInt(ingId.ingredientid)) });
+
+                    db.query(`SELECT * FROM INGREDIENT WHERE ingredientid IN (${ids})`, (err, res) => {
+                        if (err)
+                            resolve({ error: true, details: 'An error occurred while getting the ingredient information.' });
+                        else if (res.rows[0]) {
+                            resolve(res.rows);
+                        } else {
+                            resolve({ error: true, details: 'Ingredient not found' });
+                        }
+
+                    })
 
                 } else {
-                    resolve({error: true, details: 'No ingredients found for this recipe'});
+                    resolve({ error: true, details: 'No ingredients found for this recipe' });
                 }
             }
         })
-        
+
     })
 }
 
@@ -181,5 +181,58 @@ function deleteRecipe(recipeId, recipeOwner) {
     });
 }
 
-module.exports = { addRecipe, addIngredients, addCategories, deleteRecipe, getRecipe, getAllRecipes, getIngredients};
+function updateRecipe(name, time, portions, visibility, steps, recipeId, recipeOwner) {
+    return new Promise((resolve, reject) => {
+        let query = {
+            text: 'SELECT * FROM RECIPE WHERE recipeId = $1',
+            values: [recipeId]
+        };
+
+        db.query(query, (err, res) => {
+            if (err || !res.rowCount)
+                resolve({ error: true, details: 'An error occurred while fetching the recipe.' });
+
+            else {
+                if (recipeOwner.email == res.rows[0].useremail) {
+                    query = {
+                        text: `UPDATE recipe
+                        SET name = $1,
+                        time = $2,
+                        portions = $3,
+                        visibility = $4,
+                        steps = $5
+                        WHERE recipeid = $6`,
+                        values: [name, time, portions, visibility, steps, recipeId],
+                    };
+
+                    db.query(query, (err, res) => {
+                        if (err)
+                            resolve({ error: true, details: 'An error occurregetReciped while deleting the recipe.' });
+
+                        else
+                            resolve({ error: false });
+                    });
+                }
+
+                else
+                    resolve({ error: true, details: "An error occurred while deleting the recipe. Recipe doesn't belong to provided user." });
+            }
+        });
+    });
+}
+
+function removeIngredients(recipeid) {
+    return new Promise(async function (resolve, reject) {
+
+        try {
+            await db.query('DELETE FROM uses WHERE recipeid = $1', [recipeid]);
+        } catch (err) {
+            resolve(false);
+        }
+
+        resolve(true);
+    });
+}
+
+module.exports = { addRecipe, addIngredients, addCategories, deleteRecipe, getRecipe, getAllRecipes, getIngredients, removeIngredients, updateRecipe };
 
