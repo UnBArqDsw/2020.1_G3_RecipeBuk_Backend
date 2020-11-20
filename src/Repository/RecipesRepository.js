@@ -189,7 +189,6 @@ function updateRecipe(name, time, portions, visibility, steps, recipeId, recipeO
         };
 
         db.query(query, (err, res) => {
-            console.log(res.rows, recipeId)
             if (err || !res.rowCount)
                 resolve({ error: true, details: 'An error occurred while fetching the recipe.' });
 

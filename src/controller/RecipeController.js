@@ -54,7 +54,6 @@ function updateRecipe(req, res, next) {
             if (await recipesRepository.removeIngredients(body.recipeId))
                 if (!(await recipesRepository.updateRecipe(body.name, body.time, body.portions, body.visibility, body.steps, body.recipeId, response.user)).error)
                     if (!(await recipesRepository.addIngredients(body.ingredients, body.recipeId)).error) {
-                        console.log('fuckme')
                         res.json({ error: false });
                         return;
                     }
