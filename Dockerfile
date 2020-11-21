@@ -1,4 +1,5 @@
 FROM node:12.2.0-alpine
+RUN apk update && apk add bash
 
 WORKDIR /app
 
@@ -10,6 +11,6 @@ RUN npm i nodemon -g
 
 COPY ./ /app
 
-CMD ["npm","run","start-dev"] 
+ENTRYPOINT ["./wait-for-it.sh", "db:5432", "--", "npm","run","start-dev"]
 
 EXPOSE 3000

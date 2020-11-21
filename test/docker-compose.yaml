@@ -1,0 +1,20 @@
+version: "3"
+services:
+    test:
+        container_name: test
+        build:
+            context: ../
+            dockerfile: test/test.Dockerfile
+        depends_on:
+            - db
+    db:
+        image: postgres
+        environment:
+            POSTGRES_PASSWORD: ${DB_PASS}
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_DB: ${DB}
+            DATABASE_URL: ${DB_URL}
+        volumes:
+            - ./dbdata:/var/lib/postgresql/data
+        ports:
+            - "5432:5432"
