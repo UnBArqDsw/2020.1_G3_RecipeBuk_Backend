@@ -2,7 +2,7 @@
     <img src="logo.svg" alt="Logo RecipeBuk" width='50%'/>
 </p>
 
-[![Build Status](https://dev.azure.com/170102343/RecipeBuk/_apis/build/status/RecipeBuk-Backend-CI?branchName=azure-pipelines)](https://dev.azure.com/170102343/RecipeBuk/_build/latest?definitionId=6&branchName=azure-pipelines)
+[![Build Status](https://dev.azure.com/170102343/RecipeBuk/_apis/build/status/RecipeBuk-Backend-CI?branchName=refs%2Fpull%2F38%2Fmerge)](https://dev.azure.com/170102343/RecipeBuk/_build/latest?definitionId=6&branchName=refs%2Fpull%2F38%2Fmerge)
 
 ![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/170102343/RecipeBuk/6)
 
